@@ -1,0 +1,93 @@
+{
+  "headline": "Trustworthy computing, from hardware to AI agents.",
+  "intro": "SEPT Lab designs trustworthy computing environments by tightly integrating hardware security mechanisms with software systems, so that private data and programs stay protected on platforms from personal devices to cloud AI systems.",
+  "thrusts": [
+    {"text": "Uncover, understand, and defend against system and hardware vulnerabilities, across cloud systems, CPUs, GPUs, and AI systems."},
+    {"text": "Co-design software and hardware for secure and efficient AI systems."}
+  ],
+  "themes": [
+    {
+      "id": "verifiable-ai",
+      "title": "Verifiable AI",
+      "short": "Verifiable AI",
+      "layer": "Models",
+      "summary": "Evidence about what model ran, how it ran, and whether its results can be trusted, without revealing sensitive data.",
+      "topics": ["zero-knowledge verification", "LLM inference", "model oversight", "architecture observation"],
+      "topic_line": "zero-knowledge verification · LLM inference · model oversight",
+      "description": [
+        "As AI systems enter high-stakes workflows, users need evidence that a result came from the claimed model and computation, ideally without revealing sensitive data. We study how such evidence can be produced for LLM inference and where proof-based (zero-knowledge) approaches fail. Hollow-LLM Attack identifies a security problem in zero-knowledge verification of LLM inference, while WAVE uses architecture-level observation to oversee model execution without exposing model data."
+      ],
+      "papers": ["hollow-llm-sp26", "wave-asplos26"]
+    },
+    {
+      "id": "tee",
+      "title": "TEEs and Confidential Computing",
+      "short": "Confidential computing",
+      "layer": "Hardware",
+      "summary": "Make hardware-isolated execution practical: efficient, secure TEE-based systems for cloud and AI workloads.",
+      "topics": ["AMD SEV-SNP", "Intel SGX", "confidential VMs", "confidential GPUs", "oblivious memory (ORAM)"],
+      "topic_line": "SEV-SNP · SGX · confidential VMs and GPUs",
+      "description": [
+        "Trusted execution environments (TEEs) such as AMD SEV-SNP and Intel SGX let cloud tenants run code and data in hardware-isolated contexts, and confidential VMs and GPUs extend this isolation to entire workloads. We build TEE-based systems and study what it takes for them to run efficiently, from oblivious memory access inside VM-based TEEs to communication in confidential multi-GPU machine learning. We also build defenses, such as automated detection of ciphertext side-channel vulnerabilities in cryptographic implementations."
+      ],
+      "papers": ["mc-oram-isca26", "scale-hpca26", "sok-tee-asiaccs24", "ditto-arxiv24"]
+    },
+    {
+      "id": "attacks",
+      "title": "System and Hardware Vulnerabilities",
+      "short": "Vulnerabilities",
+      "layer": "Systems",
+      "summary": "Find the design flaws and side channels that break security guarantees, and disclose them to vendors.",
+      "topics": ["side channels", "SEV-SNP", "macOS sandboxing", "electromagnetic leakage", "attacks on AI models"],
+      "topic_line": "side channels · SEV-SNP · macOS sandboxing",
+      "description": [
+        "We look for design flaws and side channels that break the security guarantees of systems and hardware, across cloud systems, CPUs, GPUs, and AI systems. Recent work examines RMP entry caching in AMD SEV-SNP, for which AMD published security bulletin [AMD-SB-3036](https://www.amd.com/en/resources/product-security/bulletin/amd-sb-3036.html); hidden risks in macOS application-sandboxed PID-domain services; electromagnetic side channels that reveal virtual reality app identity and activity; and attacks on AI models.",
+        "Earlier work on AMD SEV uncovered attacks through unprotected I/O operations, ciphertext side channels, TLB poisoning, and the power reporting interface; AMD confirmed several of these findings through security bulletins and CVEs."
+      ],
+      "papers": ["rmp-caching-hasp25", "chekhovs-gun-ccs25", "vreaves-arxiv25"]
+    },
+    {
+      "id": "agent-security",
+      "title": "AI Agent Security",
+      "short": "Agent security",
+      "layer": "Agents",
+      "summary": "Observe and protect agent execution with TEEs and runtime monitoring.",
+      "topics": ["runtime monitoring", "tool isolation", "agent memory and secrets", "trusted infrastructure"],
+      "topic_line": "runtime monitoring · tool isolation · agent memory",
+      "description": [
+        "AI agents increasingly run on shared cloud infrastructure and handle sensitive data. We use TEEs and runtime monitoring to observe agent execution and to build trusted infrastructure for LLM systems and agents. Open problems include isolating tool execution and protecting long-lived memory and secrets."
+      ],
+      "open_problems": [
+        "How to use TEEs or runtime monitoring to observe agent execution",
+        "How to isolate tool execution",
+        "How to protect long-lived memory and secrets",
+        "How to build trusted infrastructure for LLM systems and agents",
+        "How to defend against cloud- and hardware-level leakages in agent backends"
+      ],
+      "papers": ["agent-memory-arxiv26", "skill-reconstruction-arxiv26", "catchbench-arxiv26", "wave-asplos26"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "WAVE artifact",
+      "description": "Code for the ASPLOS 2026 paper WAVE. It observes GPU performance counters to check claims about model execution, such as a minimum model size, without exposing model data. Running it requires an NVIDIA GPU.",
+      "paper": "wave-asplos26",
+      "themes": ["verifiable-ai", "agent-security"],
+      "links": [{"label": "GitHub", "url": "https://github.com/sept-usc/Wave"}]
+    },
+    {
+      "name": "ClawGang",
+      "description": "Infrastructure for valuable, tradable, and verifiable agent memory. ClawGang binds agent memory to verifiable computational provenance through TEE-based certification on AMD SEV-SNP. The repository includes the white paper.",
+      "paper": "agent-memory-arxiv26",
+      "themes": ["agent-security", "tee"],
+      "links": [{"label": "Website", "url": "https://clawgang.ai/"}, {"label": "GitHub", "url": "https://github.com/sept-usc/ClawGang"}]
+    },
+    {
+      "name": "Muse MCP Adapter",
+      "description": "A user-controlled bridge between the Muse personal agent and MCP servers. The agent sees only the capabilities the user has reviewed, and every write is confirmed by the user first and runs at most once.",
+      "paper": "",
+      "themes": ["agent-security"],
+      "links": [{"label": "GitHub", "url": "https://github.com/sept-usc/muse-mcp-adapter"}]
+    }
+  ]
+}

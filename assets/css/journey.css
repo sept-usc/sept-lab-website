@@ -1,0 +1,445 @@
+/* SEPT Lab: the journey (assets/js/journey.js), a small pixel-map game in a
+   modal dialog over the home page (README, "The journey"). Every rule is scoped under the dialog,
+   .journey; the entry link in the vision image (.journey-link) is styled in style.css.
+   The script sets the frame's size in --journey-w and --journey-h, at a whole number of device pixels a
+   map pixel, from 2 to 3 CSS px: in the framed dialog the whole 248 by 156 pixel map, as large as the
+   window allows, and the dialog is as wide as the frame; at 540 px and narrower, and in windows less than
+   480 px tall, the dialog fills the screen (the script uses the same media query, FULL in journey.js) and
+   the frame shows the map's whole height, edge to edge, with the view following the figure across. In
+   windows too short for that, the script crops the map's height (fit() in journey.js), and the cards
+   take a shorter form (.is-short, .is-shorter) rather than be cut.
+   Colours: ink #1f1f1f, text #333, muted #6e6e6e (5.1:1 on white) and USC cardinal #990000 (8.9:1)
+   for focus and hover; control borders #8a8a8a (3.4:1); the logo's ink #252e24 for the cards' pixel
+   frame and the main buttons (white on it 14:1); the meadow #e9ecdc is the canvas ground. All words are
+   HTML in the site's Karla, at 15 px or larger. */
+
+.journey {
+  --j-ink: #1f1f1f;
+  --j-text: #333333;
+  --j-muted: #6e6e6e;
+  --j-accent: #990000;
+  --j-field: #8a8a8a;
+  --j-frame: #c9c9c9;
+  --j-rule: #e3e3e3;
+  --j-logo: #252e24;
+  --j-meadow: #e9ecdc;
+  --j-pad: 24px;
+  --journey-w: 496px;
+  --journey-h: 312px;
+  box-sizing: border-box;
+  width: calc(var(--journey-w) + 2 * var(--j-pad));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: #ffffff;
+  color: var(--j-text);
+  font-family: "Karla", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .1), 0 18px 50px rgba(0, 0, 0, .3);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+/* centred wherever the page puts the dialog: no page rule on its margins (such as style.css's
+   .content > :last-child) can reach this one */
+dialog.journey[open] { margin: auto; }
+/* The dialog itself can take focus: a click on its plain text, or the browser's focus on the target of
+   index.html#journey. It never draws style.css's focus ring around the whole window; the controls and
+   the map inside draw their own. */
+dialog.journey:focus,
+dialog.journey:focus-visible { outline: none; }
+.journey::backdrop { background: rgba(20, 20, 20, .62); }
+.journey *,
+.journey *::before,
+.journey *::after { box-sizing: border-box; }
+.journey p,
+.journey h2 { margin: 0; }
+
+/* the title line: the name, the sound toggle and the close button; under them, across, what the journey
+   covers (the heading's box is dissolved, so its two lines are cells of the grid) */
+.journey .journey__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: 4px;
+  padding: 10px var(--j-pad) 14px;
+}
+.journey .journey__heading { display: contents; }
+.journey .journey__title {
+  grid-area: 1 / 1;
+  color: var(--j-ink);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+.journey .journey__sub { grid-area: 2 / 1 / 3 / -1; margin-top: 1px; color: var(--j-muted); font-size: 15px; line-height: 1.4; }
+.journey .journey__sound { grid-area: 1 / 2; }
+.journey .journey__close { grid-area: 1 / 3; }
+.journey .journey__close,
+.journey .journey__sound {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--j-ink);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+.journey .journey__close { margin-right: -10px; }
+.journey .journey__sound { color: var(--j-muted); }
+.journey .journey__sound[aria-pressed="true"] { color: var(--j-ink); }
+.journey .journey__close:hover,
+.journey .journey__sound:hover { background: #f2f2f2; color: var(--j-accent); }
+.journey .journey__close:focus-visible,
+.journey .journey__sound:focus-visible { outline: 2px solid var(--j-accent); outline-offset: 0; }
+.journey .journey__close svg,
+.journey .journey__sound svg { display: block; flex: none; }
+.journey .journey__sound[aria-pressed="false"] .journey__wave,
+.journey .journey__sound[aria-pressed="true"] .journey__mute { display: none; }
+
+/* the map: the canvas fills the frame from the top left, on whole device pixels */
+.journey .journey__frame {
+  position: relative;
+  width: var(--journey-w);
+  height: var(--journey-h);
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--j-meadow);
+  box-shadow: 0 0 0 1px var(--j-frame);
+}
+.journey .journey__frame:focus { outline: none; }
+.journey .journey__frame:focus-visible { outline: 2px solid var(--j-accent); outline-offset: 3px; }
+.journey .journey__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* the way into the close-up of the tree at the end and back out (journey.js zoomTo()): the whole map,
+   one device pixel a canvas pixel, which the script scales by a transform from the map's view to the
+   close-up's; nearest-neighbour, so the pixels stay sharp on the way */
+.journey .journey__zoom {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  transform-origin: 0 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+}
+.journey .journey__zoom[hidden] { display: none; }
+/* the name of the stop under the mouse */
+.journey .journey__tip {
+  position: absolute;
+  z-index: 1;
+  padding: 3px 8px;
+  border: 1px solid var(--j-frame);
+  border-radius: 3px;
+  background: #ffffff;
+  color: var(--j-ink);
+  font-size: 15px;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+}
+.journey .journey__tip.is-on { visibility: visible; }
+
+/* the title card and the ending card, over the map: white paper in a pixel frame */
+.journey .journey__card {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: min(440px, calc(100% - 24px));
+  max-height: calc(100% - 16px);
+  overflow: auto;
+  padding: 16px 20px 18px;
+  border: 2px solid var(--j-logo);
+  background: #ffffff;
+  box-shadow: 4px 4px 0 rgba(37, 46, 36, .22);
+  color: var(--j-text);
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+.journey .journey__card[hidden] { display: none; }
+.journey .journey__card-badges { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; }
+.journey .journey__card-badges .journey__icon { width: 27px; height: 27px; }
+.journey .journey__card-title { color: var(--j-ink); font-size: 20px; font-weight: 700; line-height: 1.3; }
+.journey .journey__card-text { margin-top: 6px; font-size: 16px; line-height: 1.5; text-wrap: pretty; }
+.journey .journey__card-go {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 12px;
+  margin-top: 14px;
+}
+.journey .journey__card-keys { margin-top: 10px; color: var(--j-muted); font-size: 15px; line-height: 1.45; }
+.journey .journey__or { color: var(--j-muted); font-size: 15px; }
+.journey .journey__or:empty { display: none; }
+.journey .journey__primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 2px solid var(--j-logo);
+  border-radius: 0;
+  background: var(--j-logo);
+  color: #ffffff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 rgba(37, 46, 36, .25);
+}
+.journey .journey__primary:hover { border-color: var(--j-accent); background: var(--j-accent); }
+.journey .journey__primary:active { box-shadow: 1px 1px 0 rgba(37, 46, 36, .25); transform: translate(2px, 2px); }
+.journey .journey__primary:focus-visible { outline: 2px solid var(--j-accent); outline-offset: 3px; }
+/* a card taller than its box (a cropped map) drops its keys line (the caption's first note says the same);
+   if that is not enough, also its badges, with a little less padding and type. shape() in journey.js
+   chooses: for the title card through fitCard(), and the frame grows while that card shows if even its
+   shortest form does not fit; for the ending card through closeUp() and placeCard(), beside the tree in
+   the close-up (the frame grows for it only on a phone held sideways too short for it) or under the map,
+   where in the last resort the dialog scrolls. */
+.journey .journey__card.is-short .journey__card-keys { display: none; }
+.journey .journey__card.is-shorter { padding: 10px 14px 12px; }
+.journey .journey__card.is-shorter .journey__card-badges { display: none; }
+.journey .journey__card.is-shorter .journey__card-title { font-size: 18px; }
+.journey .journey__card.is-shorter .journey__card-text { margin-top: 4px; font-size: 15px; }
+.journey .journey__card.is-shorter .journey__card-go { margin-top: 10px; }
+/* the ending card never covers the tree (journey.js closeUp() and placeCard()): in the close-up it stands
+   beside the tree, in the frame's right part, as wide and as tall as the script finds room for; where the
+   frame has no room beside the tree, it goes under the map, over the caption, whose panes hide meanwhile */
+.journey .journey__card--end.is-beside { top: 50%; right: 16px; left: auto; transform: translateY(-50%); }
+.journey .journey__card--end.is-under { top: 12px; right: 0; left: 0; width: auto; max-height: none; transform: none; }
+.journey .journey__panes.has-card > .journey__pane { visibility: hidden; }
+
+/* the bar: where the figure is, the badges earned, and two plain controls */
+.journey .journey__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 12px 0;
+  padding: 0 var(--j-pad);
+}
+.journey .journey__where {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--j-muted);
+  font-size: 15px;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.journey .journey__count {
+  flex: none;
+  color: var(--j-text);
+  font-size: 15px;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.journey .journey__count b { display: inline-block; min-width: .65em; color: var(--j-ink); font-weight: 700; text-align: center; }
+.journey .journey__buttons { display: flex; flex: none; gap: 6px; }
+.journey .journey__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--j-field);
+  border-radius: 4px;
+  background: #ffffff;
+  color: var(--j-ink);
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.journey .journey__btn:hover { border-color: var(--j-ink); color: var(--j-accent); }
+.journey .journey__btn[aria-disabled="true"] { border-color: var(--j-frame); color: #9a9a9a; cursor: default; }
+.journey .journey__btn:focus-visible { outline: 2px solid var(--j-accent); outline-offset: 2px; }
+
+/* the caption: one pane a stop, stacked in one grid cell, so it is as tall as its tallest pane and the
+   dialog keeps its size while the figure walks; only the current pane is visible */
+.journey .journey__panes {
+  position: relative;
+  display: grid;
+  margin: 0 var(--j-pad);
+  padding: 12px 0 18px;
+  border-top: 1px solid var(--j-rule);
+}
+.journey .journey__pane { grid-area: 1 / 1; min-width: 0; visibility: hidden; }
+.journey .journey__pane.is-on { visibility: visible; }
+.journey .journey__ptitle { color: var(--j-ink); font-size: 18px; font-weight: 700; line-height: 1.35; text-wrap: balance; }
+.journey .journey__ptitle a { color: var(--j-ink); text-decoration: none; }
+.journey .journey__ptitle a:hover { color: var(--j-accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.journey .journey__arrow { display: inline-block; margin-left: .35em; font-weight: 400; }
+.journey .journey__sum { margin-top: 4px; color: var(--j-text); font-size: 16px; line-height: 1.5; }
+/* the story row: the action button while the figure stands at the stop, else what the scene shows,
+   with its badge (in outline until earned, then in colour); both in one cell, so the row keeps its height */
+.journey .journey__story { display: grid; margin-top: 12px; }
+.journey .journey__story > * { grid-area: 1 / 1; }
+.journey .journey__pane:not(.is-ask) .journey__ask,
+.journey .journey__pane.is-ask .journey__done { visibility: hidden; }
+.journey .journey__pane.is-won .journey__icon.is-line,
+.journey .journey__pane:not(.is-won) .journey__done .journey__icon:not(.is-line) { display: none; }
+.journey .journey__ask { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.journey .journey__act {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 16px 0 11px;
+  border: 1px solid var(--j-field);
+  border-radius: 4px;
+  background: #ffffff;
+  color: var(--j-ink);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+}
+.journey .journey__act:hover { border-color: var(--j-ink); color: var(--j-accent); }
+.journey .journey__act:focus-visible { outline: 2px solid var(--j-accent); outline-offset: 2px; }
+.journey .journey__done,
+.journey .journey__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--j-text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.journey .journey__icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.journey .journey__done .journey__icon { margin-top: 3px; }
+.journey .journey__badges { display: flex; flex: none; gap: 4px; margin-top: 3px; }
+.journey .journey__papers { margin-top: 12px; color: var(--j-muted); font-size: 15px; line-height: 1.5; }
+.journey .journey__plabel { margin-right: .5em; }
+.journey .journey__papers a {
+  color: var(--j-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--j-field);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+}
+.journey .journey__papers a:hover { color: var(--j-accent); text-decoration-color: currentColor; }
+.journey .journey__venue,
+.journey .journey__nowrap { white-space: nowrap; }
+
+/* screen-reader-only text: the help and the live region */
+.journey .journey__sr {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* phones, and windows too short for a framed dialog: the dialog fills the screen, the map runs edge to edge */
+@media (max-width: 540px), (max-height: 480px) {
+  .journey {
+    --j-pad: 16px;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .journey .journey__head { padding-top: 6px; padding-bottom: 10px; }
+  .journey .journey__title { font-size: 20px; }
+  .journey .journey__close,
+  .journey .journey__sound { min-width: 44px; height: 44px; }
+  .journey .journey__frame { box-shadow: 0 1px 0 var(--j-frame), 0 -1px 0 var(--j-frame); }
+  .journey .journey__frame:focus-visible { outline-offset: -3px; }
+  .journey .journey__card { width: calc(100% - 20px); padding: 12px 14px 14px; }
+  .journey .journey__card-title { font-size: 18px; }
+  .journey .journey__card-go { margin-top: 10px; }
+  .journey .journey__card-text { font-size: 15px; }
+  .journey .journey__bar { gap: 8px 12px; margin: 10px 0; }
+  .journey .journey__btn { width: 44px; height: 44px; }
+  .journey .journey__act { min-height: 44px; }
+}
+/* short windows (laptops among them) and short phones: the head leaves out the subtitle (the title card
+   says the same, and the dialog's description still reads it), and the caption the papers (the stop's
+   title links to its Research section, which lists them), so the map can stay whole, or nearly, with
+   the bar and the caption on screen */
+@media (max-height: 700px) {
+  .journey .journey__sub,
+  .journey .journey__papers { display: none; }
+}
+@media (max-width: 540px) and (max-height: 780px) {
+  .journey .journey__papers { display: none; }
+}
+@media (max-width: 360px) {
+  .journey .journey__sound span { display: none; }
+  .journey .journey__buttons { gap: 4px; }
+}
+
+/* a quiet fade as the dialog and the cards appear; none with reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  .journey[open],
+  .journey[open]::backdrop { animation: journey-fade .18s ease-out; }
+  .journey .journey__card:not([hidden]) { animation: journey-fade .3s ease-out; }
+  .journey .journey__count.is-pop b { animation: journey-pop .5s ease-out; }
+}
+@keyframes journey-fade { from { opacity: 0; } }
+@keyframes journey-pop {
+  0% { color: var(--j-accent); transform: scale(1.7); }
+  55% { transform: scale(.9); }
+  100% { transform: none; }
+}
+
+@media (forced-colors: active) {
+  .journey { border: 1px solid CanvasText; }
+  .journey .journey__frame { outline: 1px solid CanvasText; }
+  .journey .journey__card,
+  .journey .journey__btn,
+  .journey .journey__act,
+  .journey .journey__primary { border-color: ButtonText; }
+  .journey .journey__btn[aria-disabled="true"] { border-color: GrayText; color: GrayText; }
+}
+
+@media print {
+  .journey { display: none; }
+}

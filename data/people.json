@@ -1,0 +1,26 @@
+{
+  "pi": {"name": "Mengyuan Li", "formal_name": "Prof. Mengyuan Li", "short_name": "Prof. Li", "role": "Principal investigator", "title": "Assistant Professor of Computer Science", "url": "https://mengyuan-l.github.io/", "email": "mengyuanli@usc.edu"},
+  "groups": [
+    {
+      "title": "PhD students",
+      "members": [
+        {"name": "Haoxuan Xu", "role": "PhD student", "url": ""},
+        {"name": "Beijie Liu", "role": "PhD student", "url": ""},
+        {"name": "Chen Gong", "role": "PhD student", "url": ""},
+        {"name": "Minghao Lin", "role": "PhD student", "url": ""},
+        {"name": "Haoyan Xu", "role": "PhD student", "note": "co-advised with Prof. Yue Zhao", "url": ""},
+        {"name": "Potung Yu", "role": "PhD student", "url": ""}
+      ]
+    },
+    {
+      "title": "MS students",
+      "members": [
+        {"name": "Tianqi Shen", "role": "MS student", "url": ""}
+      ]
+    }
+  ],
+  "alumni": [
+    {"name": "Anna Li", "role": "Undergraduate student", "now": "a PhD student at UIUC", "url": ""},
+    {"name": "Vivan Doshi", "role": "High school student", "now": "an undergraduate at UC Berkeley", "url": ""}
+  ]
+}

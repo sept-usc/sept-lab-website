@@ -1,0 +1,81 @@
+{
+  "items": [
+    {
+      "date": "2026-06",
+      "slug": "mc-oram-isca",
+      "category": "Paper",
+      "title": "MC-ORAM appears at ISCA 2026",
+      "body": "[MC-ORAM: A Mask-Assisted and Counter-Based Non-Deterministic ORAM Inside VM-Based TEEs](publications.html#mc-oram-isca26), joint work with Yongqin Wang, Rachit Rajat, Jonghyun Lee, and Murali Annavaram, appears at ISCA 2026."
+    },
+    {
+      "date": "2026-05",
+      "slug": "hollow-llm-sp",
+      "category": "Paper",
+      "title": "Hollow-LLM Attack appears at IEEE S&P 2026",
+      "body": "[Hollow-LLM Attack: Computationally Trivial Weights in Zero-Knowledge Verification of LLM Inference](publications.html#hollow-llm-sp26), by Chen Gong, Beijie Liu, and Mengyuan Li, appears at the 2026 IEEE Symposium on Security and Privacy."
+    },
+    {
+      "date": "2026-04-03",
+      "slug": "uchicago-talk",
+      "category": "Talk",
+      "title": "Talk at the University of Chicago",
+      "body": "Prof. Li gave a talk titled *Confidential Computing and Trusted Execution Environments: Challenges and Opportunities for Trustworthy AI* at the [University of Chicago Department of Computer Science](https://computerscience.uchicago.edu/events/event/mengyuan-li-usc-confidential-computing-and-trusted-execution-environments-challenges-and-opportunities-for-trustworthy-ai/)."
+    },
+    {
+      "date": "2026-03",
+      "slug": "wave-asplos",
+      "category": "Paper",
+      "title": "WAVE appears at ASPLOS 2026",
+      "body": "[WAVE: Leveraging Architecture Observation for Privacy-Preserving Model Oversight](publications.html#wave-asplos26), by Haoxuan Xu, Chen Gong, Beijie Liu, Haizhong Zheng, Beidi Chen, and Mengyuan Li, is published in the ASPLOS 2026 proceedings. The artifact is available on [GitHub](https://github.com/sept-usc/Wave)."
+    },
+    {
+      "date": "2026-02-03",
+      "slug": "scale-hpca",
+      "category": "Paper",
+      "title": "SCALE presented at HPCA 2026",
+      "body": "[SCALE](publications.html#scale-hpca26), which tackles communication bottlenecks in confidential multi-GPU machine learning, was presented at HPCA 2026 in the Distributed and Multi-GPU Training session."
+    },
+    {
+      "date": "2025-12",
+      "slug": "writing-symbiosis-neurips",
+      "category": "Paper",
+      "title": "Writing in Symbiosis at the NeurIPS 2025 Creative AI Track",
+      "body": "[Writing in Symbiosis: Mapping Human Creative Agency in the AI Era](publications.html#writing-symbiosis-neurips25), by Vivan Doshi and Mengyuan Li, appears in the NeurIPS 2025 Creative AI Track."
+    },
+    {
+      "date": "2025-10",
+      "slug": "rmp-caching-hasp",
+      "category": "Paper",
+      "title": "RMP entry caching study at HASP 2025",
+      "body": "[A Close Look at RMP Entry Caching and Its Security Implications in SEV-SNP](publications.html#rmp-caching-hasp25) appeared at HASP 2025. AMD published security bulletin [AMD-SB-3036](https://www.amd.com/en/resources/product-security/bulletin/amd-sb-3036.html) on October 20, 2025, crediting the researchers."
+    },
+    {
+      "date": "2025-10",
+      "slug": "chekhovs-gun-ccs",
+      "category": "Paper",
+      "title": "Chekhov's Gun appears at ACM CCS 2025",
+      "body": "[Chekhov's Gun: Uncovering Hidden Risks in macOS Application-Sandboxed PID-Domain Services](publications.html#chekhovs-gun-ccs25), led by Minghao Lin, is published in the ACM CCS 2025 proceedings."
+    },
+    {
+      "date": "2025-09",
+      "slug": "graph-ood-ecml-pkdd",
+      "category": "Paper",
+      "title": "Few-shot graph OOD detection at ECML PKDD 2025",
+      "body": "[Few-Shot Graph Out-of-Distribution Detection with LLMs](publications.html#fewshot-graph-ood-ecmlpkdd25), first-authored by PhD student Haoyan Xu, is published in the ECML PKDD 2025 proceedings."
+    },
+    {
+      "date": "2024-07",
+      "slug": "sok-tee-asiaccs",
+      "category": "Paper",
+      "title": "SoK on TEE design choices at ACM ASIACCS 2024",
+      "body": "[SoK: Understanding Design Choices and Pitfalls of Trusted Execution Environments](publications.html#sok-tee-asiaccs24) appears at ACM ASIACCS 2024."
+    },
+    {
+      "date": "2024",
+      "slug": "joined-usc",
+      "category": "Lab",
+      "title": "SEPT Lab starts at USC",
+      "body": "Mengyuan Li joined the [Thomas Lord Department of Computer Science](https://www.cs.usc.edu/) at USC as an Assistant Professor and started SEPT Lab."
+    }
+  ]
+}

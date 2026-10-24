@@ -1,0 +1,13 @@
+# Build output (regenerate with: python3 build.py)
+dist/
+
+# Python and OS clutter
+__pycache__/
+*.pyc
+.DS_Store
+
+# Local configuration and private maintenance notes
+.env
+.env.*
+CONTENT_TODO.md
+*.bundle

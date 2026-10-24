@@ -1,0 +1,57 @@
+{
+  "name": "SEPT Lab",
+  "wordmark": {"accent": "SEPT", "rest": "Lab"},
+  "expansion": "Security, Privacy, and Trust",
+  "description": "SEPT Lab (Security, Privacy, and Trust) at USC studies TEEs and confidential computing, system and hardware vulnerabilities, verifiable AI, and agent security.",
+  "base_url": "https://septlab.com",
+  "institution_short": "USC",
+  "copyright": "© 2026 SEPT Lab · Thomas Lord Department of Computer Science, University of Southern California",
+  "lockup": {
+    "mark": "assets/img/sept-mark-240.png",
+    "mark_width": 200,
+    "mark_height": 240,
+    "affiliation": "University of Southern California"
+  },
+  "og_image": {
+    "image": "assets/img/og-image.jpg",
+    "alt": "The SEPT Lab logo, a gold sun behind a dark tree with a seated figure under it, beside the name SEPT Lab and the words University of Southern California, above the title Security, Privacy, and Trust Lab.",
+    "width": 1200,
+    "height": 630
+  },
+  "nav": [
+    {"page": "home", "label": "About SEPT Lab"},
+    {"page": "people", "label": "People"},
+    {"page": "research", "label": "Research"},
+    {"page": "teaching", "label": "Teaching"},
+    {"page": "publications", "label": "Publications"},
+    {"page": "news", "label": "News"},
+    {"page": "contact", "label": "Contact"},
+    {"page": "join", "label": "Join"}
+  ],
+  "links": {
+    "github": {"label": "GitHub (sept-usc)", "url": "https://github.com/sept-usc"},
+    "department": {"label": "Thomas Lord Department of Computer Science", "url": "https://www.cs.usc.edu/"}
+  },
+  "sidebar": {"news_title": "SEPT news", "news_count": 8, "research_title": "Research"},
+  "home_news_count": 4,
+  "home": {
+    "title": "SEPT Lab · Security, Privacy, and Trust at USC",
+    "vision": {
+      "image": "assets/img/vision.svg",
+      "alt": "Isometric drawing of four stacked layers, Hardware, Systems, Models, and Agents, joined by one red chain of trust."
+    },
+    "about": [
+      "SEPT Lab (Security, Privacy, and Trust) is a research lab in the [Thomas Lord Department of Computer Science](https://www.cs.usc.edu/) at the University of Southern California. SEPT Lab is led by [Prof. Mengyuan Li](https://mengyuan-l.github.io/).",
+      "SEPT Lab designs trustworthy computing environments by tightly integrating hardware security mechanisms with software systems, so that private data and programs stay protected on platforms from personal devices to cloud AI systems. Our research has two thrusts: uncovering, understanding, and defending against system and hardware vulnerabilities across cloud systems, CPUs, GPUs, and AI systems; and co-designing software and hardware for secure and efficient AI systems. Please refer to our [publications](publications.html) to see examples of our research.",
+      "We also teach [graduate courses](teaching.html) on confidential computing, side channels, and systems security at USC.",
+      "We are looking for motivated PhD, MS, and undergraduate students; see how to [join SEPT Lab](join.html)."
+    ],
+    "lede": "SEPT Lab designs trustworthy computing environments by tightly integrating hardware security mechanisms with software systems, so that private data and programs stay protected on platforms from personal devices to cloud AI systems.",
+    "actions": [
+      {"label": "Explore our research", "href": "research.html"},
+      {"label": "Join the lab", "href": "join.html"}
+    ],
+    "featured": ["mc-oram-isca26", "hollow-llm-sp26", "scale-hpca26", "wave-asplos26", "chekhovs-gun-ccs25"],
+    "journey": {"order": ["tee", "verifiable-ai", "attacks", "agent-security"]}
+  }
+}

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-125 -73 250 162" width="100%" aria-hidden="true" focusable="false">
+  <title>Verifiable AI</title>
+  <polygon points="-116,13 5.2,83 5.2,67 -116,-3" fill="#ffffff" stroke="#23261f" stroke-width="5" stroke-linejoin="round"/>
+  <polygon points="116,19 5.2,83 5.2,67 116,3" fill="#23261f" stroke="#23261f" stroke-width="5" stroke-linejoin="round"/>
+  <polygon points="-5.2,-67 116,3 5.2,67 -116,-3" fill="#ffffff" stroke="#23261f" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M-71,-1 L-36.4,-21" fill="none" stroke="#23261f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M-71,-1 L36.4,21" fill="none" stroke="#23261f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1.7,41 L36.4,21" fill="none" stroke="#23261f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M36.4,21 L31.2,-18" fill="none" stroke="#23261f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M-19.1,53 L1.7,41 L-36.4,-21 L31.2,-18" fill="none" stroke="#B22A22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M4.2,-44 L4.2,-18 A26.9,15.6 0 0 0 58.1,-18 L58.1,-44 Z" fill="#EBB840" stroke="#23261f" stroke-width="5" stroke-linejoin="round"/>
+  <ellipse cx="31.2" cy="-44" rx="26.9" ry="15.6" fill="#EBB840" stroke="#23261f" stroke-width="5"/>
+  <path d="M20.2,-14.6 L28.1,-7.5 L42.6,-22.0" fill="none" stroke="#23261f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M-52.3,-31 L-52.3,-21 A15.9,9.2 0 0 0 -20.5,-21 L-20.5,-31 Z" fill="#ffffff" stroke="#23261f" stroke-width="4.5" stroke-linejoin="round"/>
+  <ellipse cx="-36.4" cy="-31" rx="15.9" ry="9.2" fill="#ffffff" stroke="#23261f" stroke-width="4.5"/>
+  <path d="M-86.9,-11 L-86.9,-1 A15.9,9.2 0 0 0 -55.1,-1 L-55.1,-11 Z" fill="#ffffff" stroke="#23261f" stroke-width="4.5" stroke-linejoin="round"/>
+  <ellipse cx="-71" cy="-11" rx="15.9" ry="9.2" fill="#ffffff" stroke="#23261f" stroke-width="4.5"/>
+  <path d="M20.5,11 L20.5,21 A15.9,9.2 0 0 0 52.3,21 L52.3,11 Z" fill="#ffffff" stroke="#23261f" stroke-width="4.5" stroke-linejoin="round"/>
+  <ellipse cx="36.4" cy="11" rx="15.9" ry="9.2" fill="#ffffff" stroke="#23261f" stroke-width="4.5"/>
+  <path d="M-14.2,31 L-14.2,41 A15.9,9.2 0 0 0 17.7,41 L17.7,31 Z" fill="#ffffff" stroke="#23261f" stroke-width="4.5" stroke-linejoin="round"/>
+  <ellipse cx="1.7" cy="31" rx="15.9" ry="9.2" fill="#ffffff" stroke="#23261f" stroke-width="4.5"/>
+</svg>

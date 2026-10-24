@@ -1,0 +1,29 @@
+{
+  "intro": "Graduate courses from SEPT Lab on confidential computing, side channels, and systems security, taught by Prof. Mengyuan Li at USC. Course pages with schedules and readings are linked where available.",
+  "courses": [
+    {
+      "code": "CSCI 530",
+      "title": "Security Systems",
+      "terms": ["Spring 2027"],
+      "status": "Upcoming",
+      "description": "Graduate course on protecting computer networks and systems with cryptography, authentication and authorization, and intrusion detection and response. A lab component gives students hands-on experience with these mechanisms.",
+      "url": ""
+    },
+    {
+      "code": "CSCI 699",
+      "title": "Understanding and Identifying Side-Channel Threats in Cloud and LLM Systems",
+      "terms": ["Fall 2025", "Fall 2026"],
+      "status": "",
+      "description": "Graduate seminar on side-channel attacks across multi-tenant cloud platforms, TEEs, GPUs, and LLM services.",
+      "url": "https://mengyuan-l.github.io/25fall_699.html"
+    },
+    {
+      "code": "CSCI 699",
+      "title": "Confidential Computing: Protecting Your Data on Cloud GPUs and CPUs",
+      "terms": ["Spring 2025", "Spring 2026"],
+      "status": "",
+      "description": "Graduate special-topics course on trusted execution environments, confidential VMs, and confidential GPUs, together with related privacy techniques such as federated learning, secure multi-party computation, and fully homomorphic encryption.",
+      "url": "https://mengyuan-l.github.io/course.html"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "intro": "The best way to reach SEPT Lab is by email to Prof. Mengyuan Li. Prospective students can read how to reach out on the [Join](join.html) page.",
+  "address_title": "Department address",
+  "address": [
+    "Thomas Lord Department of Computer Science",
+    "University of Southern California",
+    "Ginsburg Hall (GCS)",
+    "1031 Downey Way",
+    "Los Angeles, CA 90089"
+  ],
+  "address_source": {"label": "USC Computer Science: directions and maps", "url": "https://www.cs.usc.edu/visiting/directions-maps/"},
+  "maps": [
+    {"label": "Directions to Ginsburg Hall (Google Maps)", "url": "https://www.google.com/maps/dir//Ginsburg+Hall,+Los+Angeles,+CA+90089/@34.0206916,-118.2893651,18z/"},
+    {"label": "USC interactive campus map", "url": "https://maps.usc.edu/"}
+  ],
+  "links": [
+    {"label": "Mengyuan Li's homepage", "url": "https://mengyuan-l.github.io/"},
+    {"label": "Google Scholar", "url": "https://scholar.google.com/citations?user=cgjqyuoAAAAJ"},
+    {"label": "DBLP", "url": "https://dblp.org/pid/157/4437-4.html"},
+    {"label": "SEPT Lab on GitHub", "url": "https://github.com/sept-usc"},
+    {"label": "USC Viterbi faculty profile", "url": "https://viterbi.usc.edu/directory/faculty/Li/Mengyuan"}
+  ]
+}

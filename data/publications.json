@@ -1,0 +1,534 @@
+{
+  "profiles": {
+    "dblp": "https://dblp.org/pid/157/4437-4.html",
+    "scholar": "https://scholar.google.com/citations?user=cgjqyuoAAAAJ"
+  },
+  "since": 2024,
+  "publications": [
+    {
+      "id": "mc-oram-isca26",
+      "title": "MC-ORAM: A Mask-Assisted and Counter-Based Non-Deterministic ORAM Inside VM-Based TEEs",
+      "authors": ["Yongqin Wang", "Rachit Rajat", "Jonghyun Lee", "Mengyuan Li", "Murali Annavaram"],
+      "venue": "53rd ACM/IEEE Annual International Symposium on Computer Architecture (ISCA 2026)",
+      "venue_short": "ISCA",
+      "year": 2026,
+      "kind": "conference",
+      "themes": ["tee"],
+      "url": "https://doi.org/10.1109/ISCA66397.2026.00047"
+    },
+    {
+      "id": "hollow-llm-sp26",
+      "title": "Hollow-LLM Attack: Computationally Trivial Weights in Zero-Knowledge Verification of LLM Inference",
+      "authors": ["Chen Gong", "Beijie Liu", "Mengyuan Li"],
+      "venue": "2026 IEEE Symposium on Security and Privacy (S&P 2026)",
+      "venue_short": "IEEE S&P",
+      "year": 2026,
+      "kind": "conference",
+      "themes": ["attacks", "verifiable-ai"],
+      "url": "https://doi.org/10.1109/SP63933.2026.00258",
+      "pdf": "https://arxiv.org/abs/2607.28884"
+    },
+    {
+      "id": "scale-hpca26",
+      "title": "SCALE: Tackling Communication Bottlenecks in Confidential Distributed Machine Learning",
+      "authors": ["Joongun Park", "Yongqin Wang", "Huan Xu", "Hanjiang Wu", "Mengyuan Li", "Tushar Krishna"],
+      "venue": "2026 IEEE International Symposium on High-Performance Computer Architecture (HPCA 2026)",
+      "venue_short": "HPCA",
+      "year": 2026,
+      "kind": "conference",
+      "themes": ["tee"],
+      "url": "https://doi.org/10.1109/HPCA68181.2026.11408582"
+    },
+    {
+      "id": "wave-asplos26",
+      "title": "WAVE: Leveraging Architecture Observation for Privacy-Preserving Model Oversight",
+      "authors": ["Haoxuan Xu", "Chen Gong", "Beijie Liu", "Haizhong Zheng", "Beidi Chen", "Mengyuan Li"],
+      "venue": "31st ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS 2026)",
+      "venue_short": "ASPLOS",
+      "year": 2026,
+      "kind": "conference",
+      "themes": ["verifiable-ai", "agent-security"],
+      "url": "https://doi.org/10.1145/3779212.3790247",
+      "code": "https://github.com/sept-usc/Wave",
+      "equal_contribution": ["Haoxuan Xu", "Chen Gong", "Beijie Liu"]
+    },
+    {
+      "id": "cvm-query-cost-sequredb26",
+      "title": "Query Cost Model Calibration in Confidential Virtual Machines",
+      "authors": ["Qihan Zhang", "Mengyuan Li", "Ibrahim Sabek"],
+      "venue": "Workshop on Secure and Private Data Management (SeQureDB 2026)",
+      "venue_short": "SeQureDB",
+      "year": 2026,
+      "kind": "workshop",
+      "themes": ["tee"],
+      "url": "https://arxiv.org/abs/2606.26385",
+      "pdf": "https://arxiv.org/pdf/2606.26385"
+    },
+    {
+      "id": "safety-offset-arxiv26",
+      "title": "Safety Offset Learning: When Benign Fine-Tuning Misaligns LLMs",
+      "authors": ["Jesson Wang", "Zhanhao Hu", "Minghao Lin", "Yuchen Wu", "Aylin Caliskan", "Mengyuan Li"],
+      "venue": "arXiv preprint arXiv:2610.25611",
+      "venue_short": "arXiv",
+      "year": 2026,
+      "kind": "preprint",
+      "themes": ["attacks"],
+      "url": "https://arxiv.org/abs/2610.25611",
+      "pdf": "https://arxiv.org/pdf/2610.25611",
+      "code": "https://github.com/JessonWong/safety-offset-learning",
+      "equal_contribution": ["Jesson Wang", "Zhanhao Hu"]
+    },
+    {
+      "id": "catchbench-arxiv26",
+      "title": "CatchBench: When Can an Agent Failure Be Caught?",
+      "authors": ["Yue Zhao", "Mengyuan Li", "Ruolin Li", "Prince Zizhuang Wang", "Shuli Jiang", "Linsey Pang", "Xiongye Xiao", "Xiyang Hu"],
+      "venue": "arXiv preprint arXiv:2608.22808",
+      "venue_short": "arXiv",
+      "year": 2026,
+      "kind": "preprint",
+      "themes": ["agent-security"],
+      "url": "https://arxiv.org/abs/2608.22808",
+      "pdf": "https://arxiv.org/pdf/2608.22808",
+      "code": "https://github.com/yzhao062/catchbench"
+    },
+    {
+      "id": "arrowcloak-arxiv26",
+      "title": "Hiding Directions, Leaking Structure: Breaking ArrowCloak through Low-Rank Structure",
+      "authors": ["Beijie Liu", "Junyi Ouyang", "Haoxuan Xu", "Vincent Quentin Ulitzsch", "Potung Yu", "Yajie Zhao", "Mengyuan Li"],
+      "venue": "arXiv preprint arXiv:2608.21615",
+      "venue_short": "arXiv",
+      "year": 2026,
+      "kind": "preprint",
+      "themes": ["attacks"],
+      "url": "https://arxiv.org/abs/2608.21615",
+      "pdf": "https://arxiv.org/pdf/2608.21615",
+      "equal_contribution": ["Beijie Liu", "Junyi Ouyang", "Haoxuan Xu"]
+    },
+    {
+      "id": "skill-reconstruction-arxiv26",
+      "title": "Behavioral Skill Reconstruction: Reconstructing Hidden Functionality from LLM Agent Skills",
+      "authors": ["Peichun Hua", "Haoxuan Xu", "Mengyuan Li"],
+      "venue": "arXiv preprint arXiv:2608.04192",
+      "venue_short": "arXiv",
+      "year": 2026,
+      "kind": "preprint",
+      "themes": ["agent-security"],
+      "url": "https://arxiv.org/abs/2608.04192",
+      "pdf": "https://arxiv.org/pdf/2608.04192"
+    },
+    {
+      "id": "otro-arxiv26",
+      "title": "OTRO: Oblivious Tokenization Path with Square-Root ORAM",
+      "authors": ["Jonghyun Lee", "Yongqin Wang", "Rachit Rajat", "Daniel Wong", "Mengyuan Li", "Murali Annavaram"],
+      "venue": "arXiv preprint arXiv:2606.17358",
+      "venue_short": "arXiv",
+      "year": 2026,
+      "kind": "preprint",
+      "themes": ["tee"],
+      "url": "https://arxiv.org/abs/2606.17358",
+      "pdf": "https://arxiv.org/pdf/2606.17358"
+    },
+    {
+      "id": "agent-memory-arxiv26",
+      "title": "Infrastructure for Valuable, Tradable, and Verifiable Agent Memory",
+      "authors": ["Mengyuan Li", "Lei Gao", "Haoxuan Xu", "Jiate Li", "Potung Yu", "Lingke Cheng", "Yue Zhao", "Murali Annavaram"],
+      "venue": "arXiv preprint arXiv:2603.24564",
+      "venue_short": "arXiv",
+      "year": 2026,
+      "kind": "preprint",
+      "themes": ["tee", "agent-security"],
+      "url": "https://arxiv.org/abs/2603.24564",
+      "pdf": "https://arxiv.org/pdf/2603.24564",
+      "links": [{"label": "GitHub", "url": "https://github.com/sept-usc/ClawGang"}]
+    },
+    {
+      "id": "chekhovs-gun-ccs25",
+      "title": "Chekhov's Gun: Uncovering Hidden Risks in macOS Application-Sandboxed PID-Domain Services",
+      "authors": ["Minghao Lin", "Jiaxun Zhu", "Tingting Yin", "Zechao Cai", "Guanxing Wen", "Yanan Guo", "Mengyuan Li"],
+      "venue": "2025 ACM SIGSAC Conference on Computer and Communications Security (CCS 2025)",
+      "venue_short": "ACM CCS",
+      "year": 2025,
+      "kind": "conference",
+      "themes": ["attacks"],
+      "url": "https://doi.org/10.1145/3719027.3765205"
+    },
+    {
+      "id": "writing-symbiosis-neurips25",
+      "title": "Writing in Symbiosis: Mapping Human Creative Agency in the AI Era",
+      "authors": ["Vivan Doshi", "Mengyuan Li"],
+      "venue": "Advances in Neural Information Processing Systems 38 (NeurIPS 2025), Creative AI Track",
+      "venue_short": "NeurIPS",
+      "year": 2025,
+      "kind": "conference",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2025/hash/615229550c97d1c4d006a4bf6b54590e-Abstract-Creative_AI_Track.html",
+      "pdf": "https://papers.neurips.cc/paper_files/paper/2025/file/615229550c97d1c4d006a4bf6b54590e-Paper-Creative_AI_Track.pdf"
+    },
+    {
+      "id": "rmp-caching-hasp25",
+      "title": "A Close Look at RMP Entry Caching and Its Security Implications in SEV-SNP",
+      "authors": ["Alexis Bagia", "Vincent Quentin Ulitzsch", "Daniël Trujillo", "Mengyuan Li", "Mengjia Yan", "Jean-Pierre Seifert"],
+      "venue": "14th International Workshop on Hardware and Architectural Support for Security and Privacy (HASP 2025)",
+      "venue_short": "HASP",
+      "year": 2025,
+      "kind": "workshop",
+      "themes": ["attacks"],
+      "url": "https://doi.org/10.1145/3768725.3768727",
+      "disclosures": [
+        {
+          "label": "AMD-SB-3036",
+          "url": "https://www.amd.com/en/resources/product-security/bulletin/amd-sb-3036.html"
+        }
+      ]
+    },
+    {
+      "id": "fewshot-graph-ood-ecmlpkdd25",
+      "title": "Few-Shot Graph Out-of-Distribution Detection with LLMs",
+      "authors": ["Haoyan Xu", "Zhengtao Yao", "Yushun Dong", "Ziyi Wang", "Ryan A. Rossi", "Mengyuan Li", "Yue Zhao"],
+      "venue": "European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases (ECML PKDD 2025)",
+      "venue_short": "ECML PKDD",
+      "year": 2025,
+      "kind": "conference",
+      "url": "https://doi.org/10.1007/978-3-032-06078-5_18",
+      "pdf": "https://arxiv.org/abs/2503.22097"
+    },
+    {
+      "id": "lego-learn-tmlr25",
+      "title": "LEGO-Learn: Label-Efficient Graph Open-Set Learning",
+      "authors": ["Haoyan Xu", "Kay Liu", "Zhengtao Yao", "Philip S. Yu", "Mengyuan Li", "Kaize Ding", "Yue Zhao"],
+      "venue": "Transactions on Machine Learning Research (TMLR)",
+      "venue_short": "TMLR",
+      "year": 2025,
+      "kind": "journal",
+      "url": "https://openreview.net/forum?id=J6oxTJPOyN",
+      "pdf": "https://arxiv.org/abs/2410.16386",
+      "code": "https://github.com/zhengtaoyao/lego"
+    },
+    {
+      "id": "gfm-extraction-arxiv25",
+      "title": "A Systematic Study of Model Extraction Attacks on Graph Foundation Models",
+      "authors": ["Haoyan Xu", "Ruizhi Qian", "Jiate Li", "Yushun Dong", "Minghao Lin", "Hanson Yan", "Zhengtao Yao", "Qinghua Liu", "Junhao Dong", "Ruopeng Huang", "Yue Zhao", "Mengyuan Li"],
+      "venue": "arXiv preprint arXiv:2511.11912",
+      "venue_short": "arXiv",
+      "year": 2025,
+      "kind": "preprint",
+      "themes": ["attacks"],
+      "url": "https://arxiv.org/abs/2511.11912",
+      "pdf": "https://arxiv.org/pdf/2511.11912",
+      "equal_contribution": ["Haoyan Xu", "Ruizhi Qian"]
+    },
+    {
+      "id": "vreaves-arxiv25",
+      "title": "VReaves: Eavesdropping on Virtual Reality App Identity and Activity via Electromagnetic Side Channels",
+      "authors": ["Wei Sun", "Minghong Fang", "Mengyuan Li"],
+      "venue": "arXiv preprint arXiv:2506.17570",
+      "venue_short": "arXiv",
+      "year": 2025,
+      "kind": "preprint",
+      "themes": ["attacks"],
+      "url": "https://arxiv.org/abs/2506.17570",
+      "pdf": "https://arxiv.org/pdf/2506.17570"
+    },
+    {
+      "id": "glip-ood-arxiv25",
+      "title": "GLIP-OOD: Zero-Shot Graph OOD Detection with Graph Foundation Model",
+      "authors": ["Haoyan Xu", "Zhengtao Yao", "Xuzhi Zhang", "Ziyi Wang", "Langzhou He", "Yushun Dong", "Philip S. Yu", "Mengyuan Li", "Yue Zhao"],
+      "venue": "arXiv preprint arXiv:2504.21186",
+      "venue_short": "arXiv",
+      "year": 2025,
+      "kind": "preprint",
+      "url": "https://arxiv.org/abs/2504.21186",
+      "pdf": "https://arxiv.org/pdf/2504.21186"
+    },
+    {
+      "id": "graph-ood-exposure-arxiv25",
+      "title": "Graph Synthetic Out-of-Distribution Exposure with Large Language Models",
+      "authors": ["Haoyan Xu", "Zhengtao Yao", "Ziyi Wang", "Zhan Cheng", "Xiyang Hu", "Mengyuan Li", "Yue Zhao"],
+      "venue": "arXiv preprint arXiv:2504.21198",
+      "venue_short": "arXiv",
+      "year": 2025,
+      "kind": "preprint",
+      "url": "https://arxiv.org/abs/2504.21198",
+      "pdf": "https://arxiv.org/pdf/2504.21198"
+    },
+    {
+      "id": "sok-tee-asiaccs24",
+      "title": "SoK: Understanding Design Choices and Pitfalls of Trusted Execution Environments",
+      "authors": ["Mengyuan Li", "Yuheng Yang", "Guoxing Chen", "Mengjia Yan", "Yinqian Zhang"],
+      "venue": "19th ACM Asia Conference on Computer and Communications Security (ASIA CCS 2024)",
+      "venue_short": "ACM ASIACCS",
+      "year": 2024,
+      "kind": "conference",
+      "themes": ["tee"],
+      "url": "https://doi.org/10.1145/3634737.3644993",
+      "pdf": "https://mengyuan-l.github.io/files/asiaccs_sok.pdf"
+    },
+    {
+      "id": "ditto-arxiv24",
+      "title": "Ditto: Elastic Confidential VMs with Secure and Dynamic CPU Scaling",
+      "authors": ["Shixuan Zhao", "Mengyuan Li", "Mengjia Yan", "Zhiqiang Lin"],
+      "venue": "arXiv preprint arXiv:2409.15542",
+      "venue_short": "arXiv",
+      "year": 2024,
+      "kind": "preprint",
+      "themes": ["tee"],
+      "url": "https://arxiv.org/abs/2409.15542",
+      "pdf": "https://arxiv.org/pdf/2409.15542",
+      "equal_contribution": ["Shixuan Zhao", "Mengyuan Li"]
+    },
+    {
+      "id": "bridge-the-future-arxiv24",
+      "title": "Bridge the Future: High-Performance Networks in Confidential VMs without Trusted I/O devices",
+      "authors": ["Mengyuan Li", "Shashvat Srivastava", "Mengjia Yan"],
+      "venue": "arXiv preprint arXiv:2403.03360",
+      "venue_short": "arXiv",
+      "year": 2024,
+      "kind": "preprint",
+      "themes": ["tee"],
+      "url": "https://arxiv.org/abs/2403.03360",
+      "pdf": "https://arxiv.org/pdf/2403.03360"
+    },
+    {
+      "id": "cipherh-usenixsec23",
+      "title": "CipherH: Automated Detection of Ciphertext Side-channel Vulnerabilities in Cryptographic Implementations",
+      "authors": ["Sen Deng", "Mengyuan Li", "Yining Tang", "Shuai Wang", "Shoumeng Yan", "Yinqian Zhang"],
+      "venue": "32nd USENIX Security Symposium (USENIX Security 2023)",
+      "venue_short": "USENIX Security",
+      "year": 2023,
+      "kind": "conference",
+      "url": "https://www.usenix.org/conference/usenixsecurity23/presentation/deng-sen",
+      "pdf": "https://www.usenix.org/system/files/usenixsecurity23-deng-sen.pdf",
+      "code": "https://github.com/Sen-Deng/CipherH"
+    },
+    {
+      "id": "pwrleak-dimva23",
+      "title": "PWRLEAK: Exploiting Power Reporting Interface for Side-Channel Attacks on AMD SEV",
+      "authors": ["Wubing Wang", "Mengyuan Li", "Yinqian Zhang", "Zhiqiang Lin"],
+      "venue": "20th Conference on Detection of Intrusions and Malware & Vulnerability Assessment (DIMVA 2023)",
+      "venue_short": "DIMVA",
+      "year": 2023,
+      "kind": "conference",
+      "url": "https://doi.org/10.1007/978-3-031-35504-2_3",
+      "disclosures": [
+        {
+          "label": "AMD-SB-3004",
+          "url": "https://www.amd.com/en/resources/product-security/bulletin/amd-sb-3004.html"
+        },
+        {
+          "label": "CVE-2023-20575",
+          "url": "https://www.cve.org/CVERecord?id=CVE-2023-20575"
+        }
+      ]
+    },
+    {
+      "id": "ciphertext-sev-snp-sp22",
+      "title": "A Systematic Look at Ciphertext Side Channels on AMD SEV-SNP",
+      "authors": ["Mengyuan Li", "Luca Wilke", "Jan Wichelmann", "Thomas Eisenbarth", "Radu Teodorescu", "Yinqian Zhang"],
+      "venue": "2022 IEEE Symposium on Security and Privacy (S&P 2022)",
+      "venue_short": "IEEE S&P",
+      "year": 2022,
+      "kind": "conference",
+      "url": "https://doi.org/10.1109/SP46214.2022.9833768",
+      "equal_contribution": ["Mengyuan Li", "Luca Wilke"],
+      "disclosures": [
+        {
+          "label": "AMD-SB-1033",
+          "url": "https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1033.html"
+        },
+        {
+          "label": "CVE-2021-46744",
+          "url": "https://www.cve.org/CVERecord?id=CVE-2021-46744"
+        }
+      ]
+    },
+    {
+      "id": "vsgx-sp22",
+      "title": "vSGX: Virtualizing SGX Enclaves on AMD SEV",
+      "authors": ["Shixuan Zhao", "Mengyuan Li", "Yinqian Zhang", "Zhiqiang Lin"],
+      "venue": "2022 IEEE Symposium on Security and Privacy (S&P 2022)",
+      "venue_short": "IEEE S&P",
+      "year": 2022,
+      "kind": "conference",
+      "url": "https://doi.org/10.1109/SP46214.2022.9833694",
+      "code": "https://github.com/OSUSecLab/vSGX"
+    },
+    {
+      "id": "phd-thesis-osu22",
+      "title": "Understanding and Exploiting Design Flaws of AMD Secure Encrypted Virtualization",
+      "authors": ["Mengyuan Li"],
+      "venue": "Ph.D. Dissertation, The Ohio State University",
+      "venue_short": "PhD Thesis",
+      "year": 2022,
+      "kind": "thesis",
+      "url": "https://search.proquest.com/openview/e4211fc9bbca1b28c1167c6fcca66c49/1?pq-origsite=gscholar&cbl=18750&diss=y"
+    },
+    {
+      "id": "tlb-poisoning-acsac21",
+      "title": "TLB Poisoning Attacks on AMD Secure Encrypted Virtualization",
+      "authors": ["Mengyuan Li", "Yinqian Zhang", "Huibo Wang", "Kang Li", "Yueqiang Cheng"],
+      "venue": "37th Annual Computer Security Applications Conference (ACSAC 2021)",
+      "venue_short": "ACSAC",
+      "year": 2021,
+      "kind": "conference",
+      "url": "https://doi.org/10.1145/3485832.3485876",
+      "disclosures": [
+        {
+          "label": "AMD-SB-1023",
+          "url": "https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1023.html"
+        },
+        {
+          "label": "CVE-2021-26340",
+          "url": "https://www.cve.org/CVERecord?id=CVE-2021-26340"
+        }
+      ]
+    },
+    {
+      "id": "crossline-ccs21",
+      "title": "CROSSLINE: Breaking \"Security-by-Crash\" based Memory Isolation in AMD SEV",
+      "authors": ["Mengyuan Li", "Yinqian Zhang", "Zhiqiang Lin"],
+      "venue": "2021 ACM SIGSAC Conference on Computer and Communications Security (CCS 2021)",
+      "venue_short": "ACM CCS",
+      "year": 2021,
+      "kind": "conference",
+      "url": "https://doi.org/10.1145/3460120.3485253",
+      "pdf": "https://arxiv.org/abs/2008.00146",
+      "award": "Best Paper Award Runner-Up"
+    },
+    {
+      "id": "cipherleaks-usenixsec21",
+      "title": "CIPHERLEAKS: Breaking Constant-time Cryptography on AMD SEV via the Ciphertext Side Channel",
+      "authors": ["Mengyuan Li", "Yinqian Zhang", "Huibo Wang", "Kang Li", "Yueqiang Cheng"],
+      "venue": "30th USENIX Security Symposium (USENIX Security 2021)",
+      "venue_short": "USENIX Security",
+      "year": 2021,
+      "kind": "conference",
+      "url": "https://www.usenix.org/conference/usenixsecurity21/presentation/li-mengyuan",
+      "pdf": "https://www.usenix.org/system/files/sec21-li-mengyuan.pdf",
+      "disclosures": [
+        {
+          "label": "AMD-SB-1013",
+          "url": "https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1013.html"
+        },
+        {
+          "label": "CVE-2020-12966",
+          "url": "https://www.cve.org/CVERecord?id=CVE-2020-12966"
+        }
+      ]
+    },
+    {
+      "id": "hyperrace-dsc19",
+      "title": "Defeating Speculative-Execution Attacks on SGX with HyperRace",
+      "authors": ["Guoxing Chen", "Mengyuan Li", "Fengwei Zhang", "Yinqian Zhang"],
+      "venue": "2019 IEEE Conference on Dependable and Secure Computing (DSC 2019)",
+      "venue_short": "IEEE DSC",
+      "year": 2019,
+      "kind": "conference",
+      "url": "https://doi.org/10.1109/DSC47296.2019.8937682"
+    },
+    {
+      "id": "sev-io-usenixsec19",
+      "title": "Exploiting Unprotected I/O Operations in AMD's Secure Encrypted Virtualization",
+      "authors": ["Mengyuan Li", "Yinqian Zhang", "Zhiqiang Lin", "Yan Solihin"],
+      "venue": "28th USENIX Security Symposium (USENIX Security 2019)",
+      "venue_short": "USENIX Security",
+      "year": 2019,
+      "kind": "conference",
+      "url": "https://www.usenix.org/conference/usenixsecurity19/presentation/li-mengyuan",
+      "pdf": "https://www.usenix.org/system/files/sec19-li-mengyuan_0.pdf"
+    },
+    {
+      "id": "serverless-atc18",
+      "title": "Peeking Behind the Curtains of Serverless Platforms",
+      "authors": ["Liang Wang", "Mengyuan Li", "Yinqian Zhang", "Thomas Ristenpart", "Michael Swift"],
+      "venue": "2018 USENIX Annual Technical Conference (USENIX ATC 2018)",
+      "venue_short": "USENIX ATC",
+      "year": 2018,
+      "kind": "conference",
+      "url": "https://www.usenix.org/conference/atc18/presentation/wang-liang",
+      "pdf": "https://www.usenix.org/system/files/conference/atc18/atc18-wang-liang.pdf",
+      "code": "https://github.com/liangw-sec/faas_measure"
+    },
+    {
+      "id": "stacco-ccs17",
+      "title": "Stacco: Differentially Analyzing Side-Channel Traces for Detecting SSL/TLS Vulnerabilities in Secure Enclaves",
+      "authors": ["Yuan Xiao", "Mengyuan Li", "Sanchuan Chen", "Yinqian Zhang"],
+      "venue": "2017 ACM SIGSAC Conference on Computer and Communications Security (CCS 2017)",
+      "venue_short": "ACM CCS",
+      "year": 2017,
+      "kind": "conference",
+      "url": "https://doi.org/10.1145/3133956.3134016",
+      "pdf": "https://arxiv.org/abs/1707.03473",
+      "code": "https://github.com/OSUSecLab/Stacco"
+    },
+    {
+      "id": "spfm-iotj17",
+      "title": "SPFM: Scalable and Privacy-Preserving Friend Matching in Mobile Cloud",
+      "authors": ["Mengyuan Li", "Na Ruan", "Qiyang Qian", "Haojin Zhu", "Xiaohui Liang", "Le Yu"],
+      "venue": "IEEE Internet of Things Journal, vol. 4, no. 2",
+      "venue_short": "IEEE IoT-J",
+      "year": 2017,
+      "kind": "journal",
+      "url": "https://doi.org/10.1109/JIOT.2016.2582780"
+    },
+    {
+      "id": "iov-broadcast-ppna17",
+      "title": "A novel broadcast authentication protocol for internet of vehicles",
+      "authors": ["Na Ruan", "Mengyuan Li", "Jie Li"],
+      "venue": "Peer-to-Peer Networking and Applications, vol. 10, no. 6",
+      "venue_short": "PPNA",
+      "year": 2017,
+      "kind": "journal",
+      "url": "https://doi.org/10.1007/s12083-016-0493-9"
+    },
+    {
+      "id": "csi-wifi-ccs16",
+      "title": "When CSI Meets Public WiFi: Inferring Your Mobile Phone Password via WiFi Signals",
+      "authors": ["Mengyuan Li", "Yan Meng", "Junyi Liu", "Haojin Zhu", "Xiaohui Liang", "Yao Liu", "Na Ruan"],
+      "venue": "2016 ACM SIGSAC Conference on Computer and Communications Security (CCS 2016)",
+      "venue_short": "ACM CCS",
+      "year": 2016,
+      "kind": "conference",
+      "url": "https://doi.org/10.1145/2976749.2978397",
+      "pdf": "https://nsec.sjtu.edu.cn/publications/2016/When.pdf"
+    },
+    {
+      "id": "jamming-jsac16",
+      "title": "You Can Jam But You Cannot Hide: Defending Against Jamming Attacks for Geo-Location Database Driven Spectrum Sharing",
+      "authors": ["Haojin Zhu", "Chenliaohui Fang", "Yao Liu", "Cailian Chen", "Mengyuan Li", "Xuemin Sherman Shen"],
+      "venue": "IEEE Journal on Selected Areas in Communications, vol. 34, no. 10",
+      "venue_short": "IEEE JSAC",
+      "year": 2016,
+      "kind": "journal",
+      "url": "https://doi.org/10.1109/JSAC.2016.2605799"
+    },
+    {
+      "id": "smartsec-iccc15",
+      "title": "SmartSec: Secret sharing-based location-aware privacy enhancement in smart devices",
+      "authors": ["Bett Ben Chirchir", "Xiaokuan Zhang", "Mengyuan Li", "Qiyang Qian", "Na Ruan", "Haojin Zhu"],
+      "venue": "2015 IEEE/CIC International Conference on Communications in China (ICCC 2015)",
+      "venue_short": "IEEE/CIC ICCC",
+      "year": 2015,
+      "kind": "conference",
+      "url": "https://doi.org/10.1109/ICCChina.2015.7448631"
+    },
+    {
+      "id": "mutesla-ipccc14",
+      "title": "Efficient and enhanced broadcast authentication protocols based on multilevel μTESLA",
+      "authors": ["Xiang Li", "Na Ruan", "Fan Wu", "Jie Li", "Mengyuan Li"],
+      "venue": "33rd IEEE International Performance Computing and Communications Conference (IPCCC 2014)",
+      "venue_short": "IPCCC",
+      "year": 2014,
+      "kind": "conference",
+      "url": "https://doi.org/10.1109/PCCC.2014.7017109"
+    },
+    {
+      "id": "rsu-broadcast-msn14",
+      "title": "A Paralleling Broadcast Authentication Protocol for Sparse RSUs in Internet of Vehicles",
+      "authors": ["Mengyuan Li", "Na Ruan", "Haojin Zhu", "Jie Li", "Xiang Li"],
+      "venue": "10th International Conference on Mobile Ad-hoc and Sensor Networks (MSN 2014)",
+      "venue_short": "MSN",
+      "year": 2014,
+      "kind": "conference",
+      "url": "https://doi.org/10.1109/MSN.2014.15"
+    }
+  ]
+}

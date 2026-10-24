@@ -1,0 +1,24 @@
+{
+  "intro": [
+    "SEPT Lab is actively looking for motivated PhD, MS, and undergraduate students who are passionate about systems and security. Applicants from diverse backgrounds are strongly encouraged to apply. The [research](research.html) and [publications](publications.html) pages describe the lab's current work, and the [People](people.html) page lists current members."
+  ],
+  "audiences": [
+    {
+      "id": "phd",
+      "title": "Prospective PhD students",
+      "subject": "[SEPT PhD]",
+      "body": [
+        "PhD applications are submitted through USC Viterbi Graduate Admission. See the [Ph.D. application information](https://viterbigradadmission.usc.edu/doctoral/) for requirements and deadlines, and the department's [Ph.D. program page](https://www.cs.usc.edu/academic-programs/phd/) for program details. If you are interested in joining SEPT Lab, feel free to reach out to Prof. Li by email."
+      ]
+    },
+    {
+      "id": "ms-undergrad",
+      "title": "MS and undergraduate students",
+      "subject": "[SEPT Research]",
+      "body": [
+        "If you are interested in research with SEPT Lab, feel free to reach out to Prof. Li by email."
+      ]
+    }
+  ],
+  "closing": ""
+}
