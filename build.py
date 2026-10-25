@@ -30,6 +30,7 @@ import argparse
 import datetime
 import difflib
 import fnmatch
+import hashlib
 import html
 import json
 import re
@@ -1236,6 +1237,12 @@ def since_text(ctx):
     return f" since {since}" if since else ""
 
 
+def icon_href(name):
+    """Use the icon's contents as its version so browsers fetch a changed mark."""
+    version = hashlib.sha256((ASSETS / "img" / name).read_bytes()).hexdigest()[:12]
+    return f"assets/img/{name}?v={version}"
+
+
 def head(ctx, page_id, title, description):
     """A page_id outside PAGES (the 404 page) gets no canonical URL and is kept out of search results.
     Every page links the same stylesheet and script; the home page's journey loads its own two files
@@ -1290,10 +1297,10 @@ def head(ctx, page_id, title, description):
 <meta property="og:title" content="{esc(full_title)}">
 <meta property="og:description" content="{esc(description)}">
 {meta_lines}
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="assets/img/icon-192.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="icon" href="{icon_href('favicon.svg')}" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="{icon_href('favicon-32.png')}">
+<link rel="icon" type="image/png" sizes="192x192" href="{icon_href('icon-192.png')}">
+<link rel="apple-touch-icon" href="{icon_href('apple-touch-icon.png')}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{FONTS}">
