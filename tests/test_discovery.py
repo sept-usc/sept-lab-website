@@ -31,12 +31,43 @@ class HTMLSnapshot(HTMLParser):
         self.canonicals = []
         self.markdown_links = []
         self.structured = []
+        self.title = ""
+        self.description = ""
+        self.h1 = []
+        self.og = {}
+        self.robots = []
+        self.anchors = []
+        self._title = self._h1 = self._main = self._nav = False
+        self._anchor = None
+        self._sections = []
         self._json = None
         self.feed(html)
         self.close()
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == "title":
+            self._title = True
+        if tag == "h1":
+            self._h1 = True
+            self.h1.append("")
+        if tag == "meta" and attrs.get("name") == "description":
+            self.description = attrs["content"]
+        if tag == "meta" and attrs.get("name") == "robots":
+            self.robots.append(attrs.get("content", ""))
+        if tag == "meta" and attrs.get("property", "").startswith("og:"):
+            self.og[attrs["property"]] = attrs.get("content", "")
+        if tag == "main":
+            self._main = True
+        if tag == "nav" and attrs.get("aria-label") == "Main":
+            self._nav = True
+        if tag == "section" and self._main:
+            self._sections.append(attrs.get("id"))
+        if tag == "a":
+            self._anchor = {"href": attrs.get("href", ""), "text": "", "label": attrs.get("aria-label", ""),
+                            "main": self._main, "nav": self._nav, "current": attrs.get("aria-current"),
+                            "section": self._sections[-1] if self._sections else None}
+            self.anchors.append(self._anchor)
         if attrs.get("id"):
             self.ids.add(attrs["id"])
         if tag == "article" and "pub" in attrs.get("class", "").split():
@@ -49,10 +80,28 @@ class HTMLSnapshot(HTMLParser):
             self._json = []
 
     def handle_data(self, data):
+        if self._title:
+            self.title += data
+        if self._h1:
+            self.h1[-1] += data
+        if self._anchor is not None:
+            self._anchor["text"] += data
         if self._json is not None:
             self._json.append(data)
 
     def handle_endtag(self, tag):
+        if tag == "title":
+            self._title = False
+        if tag == "h1":
+            self._h1 = False
+        if tag == "main":
+            self._main = False
+        if tag == "nav":
+            self._nav = False
+        if tag == "section" and self._main and self._sections:
+            self._sections.pop()
+        if tag == "a":
+            self._anchor = None
         if tag == "script" and self._json is not None:
             self.structured.append(json.loads("".join(self._json)))
             self._json = None
@@ -95,6 +144,59 @@ class DiscoveryIntegrationTests(unittest.TestCase):
         self.assertFalse(self.html["404.html"].structured)
         self.assertNotIn("404.md", self.pages)
         self.assertIn("Sitemap: " + self.base + "/sitemap.xml", self.pages["robots.txt"])
+
+    def test_each_public_page_has_clear_metadata_and_the_complete_real_navigation(self):
+        titles, descriptions = [], []
+        expected_nav = [(build.PAGES[item["page"]], item["label"]) for item in self.ctx["site"]["nav"]]
+        self.assertEqual({href for href, _ in expected_nav}, set(build.PAGES.values()))
+        for page_id, filename in build.PAGES.items():
+            with self.subTest(page=filename):
+                page = self.html[filename]
+                titles.append(page.title)
+                descriptions.append(page.description)
+                self.assertIn(self.ctx["site"]["name"], page.title)
+                self.assertTrue(page.description.strip())
+                self.assertFalse(any("noindex" in value.lower() for value in page.robots))
+                self.assertEqual(len(page.h1), 1)
+                self.assertTrue(page.h1[0].strip())
+                self.assertEqual(page.og["og:title"], page.title)
+                self.assertEqual(page.og["og:description"], page.description)
+                self.assertEqual(page.og["og:url"], page.canonicals[0])
+                self.assertEqual(page.og["og:image"], self.base + "/" + self.ctx["site"]["og_image"]["image"])
+                nav = [link for link in page.anchors if link["nav"]]
+                self.assertEqual([(link["href"], link["text"].strip()) for link in nav], expected_nav)
+                self.assertEqual([link["href"] for link in nav if link["current"] == "page"], [filename])
+                for link in page.anchors:
+                    self.assertTrue(link["text"].strip() or link["label"].strip(), link["href"])
+        self.assertEqual(len(set(titles)), len(build.PAGES))
+        self.assertEqual(len(set(descriptions)), len(build.PAGES))
+
+    def test_schema_people_and_research_subjects_resolve_to_visible_content(self):
+        for node in self.graph("people.html"):
+            if node.get("@type") == "Person":
+                target = urlsplit(node["@id"])
+                self.assertEqual(target.path, "/people.html")
+                self.assertIn(unquote(target.fragment), self.html["people.html"].ids)
+        page = next(node for node in self.graph("research.html")
+                    if node.get("@id") == self.base + "/research.html#webpage")
+        subjects = [node for node in page["about"] if node.get("@type") == "Thing"]
+        self.assertEqual({node["name"] for node in subjects},
+                         {theme["title"] for theme in self.ctx["research"]["themes"]})
+        for subject in subjects:
+            self.assertEqual(subject["url"], subject["@id"])
+            self.assertIn(unquote(urlsplit(subject["url"]).fragment), self.html["research.html"].ids)
+
+    def test_verifiable_resource_is_contextual_and_in_agent_text(self):
+        links = [link for link in self.html["research.html"].anchors if link["href"] == "https://verifiable.pro/"]
+        self.assertEqual(len(links), 1)
+        self.assertTrue(links[0]["main"])
+        self.assertEqual(links[0]["section"], "verifiable-ai")
+        self.assertEqual(links[0]["text"], "verifiable.pro")
+        self.assertIn("](https://verifiable.pro/)", self.pages["research.md"])
+        self.assertIn("](https://verifiable.pro/)", self.pages["llms-full.txt"])
+        for filename in build.PAGES.values():
+            self.assertFalse(any(link["href"] == "https://verifiable.pro/" and not link["main"]
+                                 for link in self.html[filename].anchors), filename)
 
     def test_article_nodes_match_filtered_visible_papers_and_authors(self):
         source = self.raw_publications

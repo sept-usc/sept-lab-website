@@ -15,7 +15,8 @@
       "topics": ["zero-knowledge verification", "LLM inference", "model oversight", "architecture observation"],
       "topic_line": "zero-knowledge verification · LLM inference · model oversight",
       "description": [
-        "As AI systems enter high-stakes workflows, users need evidence that a result came from the claimed model and computation, ideally without revealing sensitive data. We study how such evidence can be produced for LLM inference and where proof-based (zero-knowledge) approaches fail. Hollow-LLM Attack identifies a security problem in zero-knowledge verification of LLM inference, while WAVE uses architecture-level observation to oversee model execution without exposing model data."
+        "As AI systems enter high-stakes workflows, users need evidence that a result came from the claimed model and computation, ideally without revealing sensitive data. We study how such evidence can be produced for LLM inference and where proof-based (zero-knowledge) approaches fail. Hollow-LLM Attack identifies a security problem in zero-knowledge verification of LLM inference, while WAVE uses architecture-level observation to oversee model execution without exposing model data.",
+        "SEPT Lab also maintains [verifiable.pro](https://verifiable.pro/), a public resource on verifiable AI, starting with trusted execution environments. It offers news, explainers, and guides on what evidence can establish about an AI service's claims, and where the limits remain."
       ],
       "papers": ["hollow-llm-sp26", "wave-asplos26"]
     },

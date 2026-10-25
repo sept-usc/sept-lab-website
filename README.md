@@ -57,7 +57,9 @@ The builder reports unknown fields, invalid dates and URLs, duplicate IDs, and u
 
 ## Search and agent-readable files
 
-With `base_url` set, every public page has its own title, description and canonical URL. JSON-LD describes the lab, its website, the PI, people, research subjects and the publications that are visible on the site. PI profiles belong to the PI; alumni are not marked as current members. Paper records retain their supplied year without an invented publication day.
+With `base_url` set, every public page has its own title, description and canonical URL, with matching social-preview metadata. JSON-LD describes the lab, its website, the PI, people, research subjects and the publications that are visible on the site. Person and research-subject identifiers point to their visible page anchors. PI profiles belong to the PI; alumni are not marked as current members. Paper records retain their supplied year without an invented publication day.
+
+The eight sections are peers in the main navigation; each page is available through ordinary HTML links without JavaScript. Keep these labels clear and summaries specific to each page. Google chooses [sitelinks](https://developers.google.com/search/docs/appearance/sitelinks) automatically for each query; the site cannot require particular links or categories to appear. The Research page introduces [verifiable.pro](https://verifiable.pro/) in its Verifiable AI section as a lab-maintained resource, rather than repeating it in site-wide navigation or identity metadata.
 
 The build also writes:
 

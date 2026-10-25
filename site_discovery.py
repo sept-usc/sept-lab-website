@@ -22,6 +22,11 @@ def canonical(site, file_name):
     return base + ("/" if file_name == "index.html" else "/" + file_name)
 
 
+def person_anchor(name):
+    """A stable, readable fragment shared by the visible person and its schema identity."""
+    return "person-" + "-".join(name.lower().split())
+
+
 def plain(text):
     text = re.sub(r"\[([^\]]+)\]\([^\s]+\)", r"\1", text)
     return re.sub(r"\s+", " ", text.replace("**", "").replace("*", "")).strip()
@@ -35,7 +40,7 @@ def structured_data(ctx, page_id, title, description, url, project_anchor):
     base = site["base_url"].rstrip("/")
     org_id, web_id = base + "/#lab", base + "/#website"
     pi = people["pi"]
-    pi_id = base + "/people.html#person-" + quote(pi["name"].lower().replace(" ", "-"))
+    pi_id = base + "/people.html#" + quote(person_anchor(pi["name"]))
     org = {"@type": "Organization", "@id": org_id, "name": site["name"],
            "url": base + "/", "description": site["description"]}
     if site.get("expansion"):
@@ -83,7 +88,7 @@ def structured_data(ctx, page_id, title, description, url, project_anchor):
         for current, rows in ((True, [m for g in people.get("groups", []) for m in g["members"]]),
                               (False, people.get("alumni", []))):
             for row in rows:
-                item = {"@type": "Person", "@id": base + "/people.html#person-" + quote(row["name"].lower().replace(" ", "-")),
+                item = {"@type": "Person", "@id": base + "/people.html#" + quote(person_anchor(row["name"])),
                         "name": row["name"]}
                 if row.get("url"):
                     item["url"] = row["url"]
@@ -96,7 +101,8 @@ def structured_data(ctx, page_id, title, description, url, project_anchor):
         page["mainEntity"] = item_list(ids)
     elif page_id == "research":
         # Research directions are subjects, not projects or funded awards.
-        page["about"] = [{"@id": org_id}] + [{"@type": "Thing", "name": t["title"],
+        page["about"] = [{"@id": org_id}] + [{"@type": "Thing", "@id": url + "#" + quote(t["id"]),
+                                                "url": url + "#" + quote(t["id"]), "name": t["title"],
                                                 "description": plain(t["summary"])} for t in themes]
         ids = []
         for project in ctx["research"].get("projects", []):

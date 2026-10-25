@@ -1982,7 +1982,7 @@ def page_publications(ctx):
 </div>
 </div>"""
     description = (f"Publications of {site['name']} at {site['institution_short']}{since_text(ctx)}, "
-                   "grouped by year.")
+                   "with authors, venues, paper and code links, and security disclosures where available.")
     return render_page(ctx, "publications", "Publications", description, body)
 
 
@@ -2009,7 +2009,8 @@ def page_people(ctx):
     pi_line = person_name(pi["name"], pi.get("url") or "")
     if pi.get("role"):
         pi_line += f', {esc(pi["title"])}'
-    parts.append(f'<h2 id="pi-h">{esc(pi.get("role") or pi["title"])}</h2>\n<p class="pi">{pi_line}</p>')
+    parts.append(f'<h2 id="pi-h">{esc(pi.get("role") or pi["title"])}</h2>\n'
+                 f'<p class="pi" id="{esc(site_discovery.person_anchor(pi["name"]))}">{pi_line}</p>')
     groups = [g for g in people.get("groups", []) if g.get("members")]
     for gi, g in enumerate(groups):
         # The heading already names the role when every member shares it.
@@ -2021,7 +2022,7 @@ def page_people(ctx):
                 line += f', {esc(m["role"])}'
             if m.get("note"):
                 line += f', {inline(m["note"], "people.json.note")}'
-            items.append(f"  <li>{line}</li>")
+            items.append(f'  <li id="{esc(site_discovery.person_anchor(m["name"]))}">{line}</li>')
         parts.append(f'<h2 id="group-{gi + 1}-h">{esc(g["title"])}</h2>\n<ul class="people-list">\n'
                      + "\n".join(items) + "\n</ul>")
     alumni = people.get("alumni") or []
@@ -2035,7 +2036,7 @@ def page_people(ctx):
                 line += f'; {inline(a["note"], "people.json.alumni.note")}'
             if a.get("now"):
                 line += f' -&gt; {esc(a["now"])}'
-            items.append(f"  <li>{line}</li>")
+            items.append(f'  <li id="{esc(site_discovery.person_anchor(a["name"]))}">{line}</li>')
         parts.append('<h2 id="alumni-h">Alumni</h2>\n<ul class="people-list">\n' + "\n".join(items) + "\n</ul>")
     if groups:
         note = f'Interested in working with us? See how to <a href="join.html">{esc(keep_link("join " + site["name"]))}</a>.'
@@ -2044,7 +2045,8 @@ def page_people(ctx):
                 f'to <a href="join.html">{esc(keep_link("join the lab"))}</a>.')
     parts.append(f'<p class="page-note">{note}</p>')
     body = f'{page_title("People")}\n<div class="content content--people">\n' + "\n".join(parts) + "\n</div>"
-    description = f"The {site['name']} team at {site['institution_short']}: principal investigator, students, and alumni."
+    description = (f"Meet {site['name']} at {site['institution_short']}: principal investigator {pi['name']}, "
+                   "current students, and alumni.")
     return render_page(ctx, "people", "People", description, body)
 
 
@@ -2079,7 +2081,8 @@ def page_teaching(ctx):
     if not courses:
         parts.append("<p>Course information will be added soon.</p>")
     body = f'{page_title("Teaching")}\n<div class="content content--teaching">\n' + "\n".join(parts) + "\n</div>"
-    description = f"Graduate courses from {site['name']} at {site['institution_short']}."
+    description = (f"Graduate courses taught by {ctx['people']['pi']['name']} at {site['institution_short']} "
+                   "on systems security, side-channel threats, and confidential computing.")
     return render_page(ctx, "teaching", "Teaching", description, body)
 
 
@@ -2158,7 +2161,8 @@ def page_join(ctx):
     if data.get("closing"):
         parts.append(f'<p class="page-note">{inline(data["closing"], "join.json.closing")}</p>')
     body = f'{page_title("Join")}\n<div class="content content--join">\n' + "\n".join(parts) + "\n</div>"
-    description = f"How to join {site['name']} at {site['institution_short']}."
+    description = (f"PhD, MS, and undergraduate research opportunities at {site['name']}, {site['institution_short']}, "
+                   "with application guidance and contact details for prospective students.")
     return render_page(ctx, "join", "Join", description, body)
 
 
@@ -2186,7 +2190,8 @@ def page_contact(ctx):
             items = "\n".join(f'  <li><a href="{esc(m["url"])}">{esc(curl(m["label"]))}</a></li>' for m in links)
             parts.append(f'<h2 id="{hid}">{title}</h2>\n<ul>\n{items}\n</ul>')
     body = f'{page_title("Contact")}\n<div class="content content--contact">\n' + "\n".join(parts) + "\n</div>"
-    description = f"How to contact {site['name']} at {site['institution_short']}."
+    description = (f"Contact {site['name']} at {site['institution_short']} through principal investigator "
+                   f"{ctx['people']['pi']['name']}, with the department address, campus directions, and official profile links.")
     return render_page(ctx, "contact", "Contact", description, body)
 
 
