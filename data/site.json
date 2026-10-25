@@ -4,6 +4,7 @@
   "expansion": "Security, Privacy, and Trust",
   "description": "SEPT Lab (Security, Privacy, and Trust) at USC studies TEEs and confidential computing, system and hardware vulnerabilities, verifiable AI, and agent security.",
   "base_url": "https://septlab.com",
+  "analytics": {"measurement_id": "G-NWL0J77CN5"},
   "institution_short": "USC",
   "copyright": "© 2026 SEPT Lab · Thomas Lord Department of Computer Science, University of Southern California",
   "lockup": {

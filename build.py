@@ -83,7 +83,8 @@ MONTHS = ["January", "February", "March", "April", "May", "June", "July",
 # silently. Fields whose name starts with "_" are ignored and can hold comments.
 KEYS = {
     "site": {"name", "wordmark", "expansion", "description", "base_url", "institution_short",
-             "copyright", "lockup", "og_image", "nav", "links", "sidebar", "home_news_count", "home"},
+             "copyright", "lockup", "og_image", "nav", "links", "sidebar", "home_news_count", "home", "analytics"},
+    "analytics": {"measurement_id"},
     "wordmark": {"accent", "rest"},
     "lockup": {"mark", "mark_width", "mark_height", "affiliation"},
     "og_image": {"image", "alt", "width", "height"},
@@ -479,6 +480,13 @@ def load_site():
         field(site, key, "str", w)
     field(site, "expansion", "str", w, required=False, allow_empty=True, default="")
     url_field(site, "base_url", w, required=False, local_ok=False)
+    analytics = field(site, "analytics", "dict", w, required=False, default=None)
+    if analytics is not None:
+        aw = f"{w}.analytics"
+        check_keys(analytics, "analytics", aw)
+        measurement_id = field(analytics, "measurement_id", "str", aw, required=False, allow_empty=True)
+        if measurement_id and not re.fullmatch(r"G-[A-Z0-9]+", measurement_id):
+            ERRORS.add(f"{aw}.measurement_id", "must be empty or a GA4 measurement ID such as G-XXXXXXXXXX")
 
     wordmark = field(site, "wordmark", "dict", w, default={})
     check_keys(wordmark, "wordmark", f"{w}.wordmark")
@@ -1261,11 +1269,18 @@ def head(ctx, page_id, title, description):
     else:
         meta.append('<meta name="twitter:card" content="summary">')
     meta_lines = "\n".join(meta)
+    analytics_script = ""
+    measurement_id = analytics_id(ctx, page_id)
+    if measurement_id:
+        analytics_script = (f'\n<script id="analytics-script" src="assets/js/analytics.js" defer '
+                            f'data-measurement-id="{esc(measurement_id)}" '
+                            f'data-site-url="{esc(base)}"></script>')
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>{esc(full_title)}</title>
 <meta name="description" content="{esc(description)}">
 <meta name="color-scheme" content="light">
@@ -1284,7 +1299,7 @@ def head(ctx, page_id, title, description):
 <link rel="stylesheet" href="{FONTS}">
 <link rel="stylesheet" href="assets/css/style.css">
 <script>document.documentElement.classList.add('js')</script>
-<script src="assets/js/site.js" defer onerror="document.documentElement.classList.remove('js')"></script>
+<script src="assets/js/site.js" defer onerror="document.documentElement.classList.remove('js')"></script>{analytics_script}
 </head>"""
 
 
@@ -1397,12 +1412,57 @@ def sidebar(ctx):
     return '<aside class="sidebar" aria-label="Sidebar">\n' + "\n".join(widgets) + "\n</aside>"
 
 
-def footer(ctx):
-    """One line, as on comsec: the copyright on the left and a chevron back to the top on the right."""
+def analytics_id(ctx, page_id):
+    """Only configured public content pages offer analytics; previews are checked again in JS."""
+    if page_id not in PAGES or not ctx["site"].get("base_url"):
+        return ""
+    return (ctx["site"].get("analytics") or {}).get("measurement_id") or ""
+
+
+def privacy(ctx, page_id):
+    enabled = bool(analytics_id(ctx, page_id))
+    analytics_text = ("We use optional Google Analytics to understand visits and page use. It loads only after "
+                      "you choose Allow and may store first-party analytics cookies. Page and referring URLs "
+                      "exclude query strings and fragments. We do not send search terms or form/input content, "
+                      "add a user ID, or use advertising features. Google receives connection metadata, such as "
+                      "your network address and browser/device details, when your browser contacts it. "
+                      "You can decline or change your choice with Analytics choices; the site remains available. "
+                      "When browser storage is available, your choice is remembered for up to six months. "
+                      "If only session storage works, it lasts for this tab's session. A notice appears if "
+                      "your browser cannot save the choice.") if enabled else "Optional analytics is not enabled on this page."
+    opener = ('\n    <button type="button" class="privacy-button" id="analytics-open" '
+              'aria-controls="analytics-choice" aria-expanded="false" hidden>Analytics choices</button>') if enabled else ""
+    return f"""  <div class="privacy-links">
+    <details class="privacy-note" id="privacy">
+      <summary>Privacy</summary>
+      <p>{analytics_text}</p>
+      <p>The site is hosted by GitHub Pages and loads fonts from Google Fonts. These services receive normal connection metadata separately from optional analytics. See <a href="https://policies.google.com/privacy">Google's privacy policy</a>.</p>
+    </details>{opener}
+  </div>"""
+
+
+def analytics_choice(ctx, page_id):
+    if not analytics_id(ctx, page_id):
+        return ""
+    return """<section class="analytics-choice" id="analytics-choice" aria-labelledby="analytics-title" aria-describedby="analytics-description" hidden>
+  <h2 id="analytics-title" tabindex="-1">Optional analytics</h2>
+  <p id="analytics-description">Allow Google Analytics to count visits and understand page use? It loads only with your permission. Declining keeps the site available. <a href="#privacy" id="analytics-privacy">Privacy details</a>.</p>
+  <p class="analytics-state" id="analytics-state" role="status">Analytics is off until you allow it.</p>
+  <div class="analytics-actions">
+    <button type="button" class="privacy-button" id="analytics-allow">Allow</button>
+    <button type="button" class="privacy-button" id="analytics-decline">Decline</button>
+    <button type="button" class="privacy-button" id="analytics-close">Close</button>
+  </div>
+</section>"""
+
+
+def footer(ctx, page_id):
+    """Copyright, privacy details and a chevron back to the top."""
     return f"""<footer class="site-footer">
   <div class="site-info">
     <p class="copyright">{esc(ctx['site']['copyright'])}</p>
     <a class="back-to-top" href="#top">{CHEVRON_UP}<span class="visually-hidden">Back to top</span></a>
+{privacy(ctx, page_id)}
   </div>
 </footer>"""
 
@@ -1413,7 +1473,10 @@ def render_page(ctx, page_id, title, description, body, end=""):
     home page's journey dialog."""
     frame = (f'<div class="site-content">\n<div class="inner">\n<main class="main" id="main" tabindex="-1">\n'
              f'{body}\n</main>\n{sidebar(ctx)}\n</div>\n</div>')
-    parts = [head(ctx, page_id, title, description), header(ctx, page_id), frame, footer(ctx)]
+    parts = [head(ctx, page_id, title, description), header(ctx, page_id), frame, footer(ctx, page_id)]
+    choice = analytics_choice(ctx, page_id)
+    if choice:
+        parts.append(choice)
     if end:
         parts.append(end)
     return "\n".join(parts) + "\n</body>\n</html>\n"

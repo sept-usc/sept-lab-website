@@ -38,7 +38,7 @@ Edit the corresponding file under [data/](data/), then rebuild and check links.
 
 | File | Content |
 | --- | --- |
-| [site.json](data/site.json) | Lab identity, homepage text, navigation, sidebar, social preview, and public URL |
+| [site.json](data/site.json) | Lab identity, homepage text, navigation, sidebar, social preview, public URL, and optional analytics ID |
 | [people.json](data/people.json) | Principal investigator, current members, alumni, and contact email |
 | [research.json](data/research.json) | Research directions, topics, representative papers, and projects |
 | [publications.json](data/publications.json) | Publication records, paper and artifact links, and scholarly profiles |
@@ -72,6 +72,16 @@ The build also writes:
 The text exports leave out navigation, sidebars and the optional game. Edit the JSON content and rebuild to keep HTML and text aligned. A content page links its Markdown copy in the document head. The 404 page remains `noindex` and has no canonical URL or text copy.
 
 For Google and Bing, submit `https://septlab.com/sitemap.xml` through the site's verified webmaster account. Google's [organization](https://developers.google.com/search/docs/appearance/structured-data/organization) and [site-name](https://developers.google.com/search/docs/appearance/site-names) guidance explain the identity metadata. The text exports help direct agent readers; Google Search, including its [AI features](https://developers.google.com/search/docs/appearance/ai-features), uses the standard search requirements and does not require these extra files.
+
+## Optional analytics
+
+Analytics is off while `analytics.measurement_id` in [data/site.json](data/site.json) is empty. To enable GA4, first turn **Enhanced measurement off** for the web data stream, including history-based page views, site search, outbound clicks, downloads, video and form interactions. Keep Google signals and advertising personalization off, and do not connect advertising tags. Then set the stream's public `G-...` measurement ID and rebuild. The ID is not a secret; no API key belongs in this repository.
+
+[assets/js/analytics.js](assets/js/analytics.js) uses [basic consent](https://developers.google.com/tag-platform/security/concepts/consent-mode): no Google Analytics script, queue or request before an explicit Allow choice. A valid Allow or Decline is remembered for up to 180 days in local storage, with session storage as a fallback for this tab. A saved Decline in either store overrides a stale Allow in the other. The footer's **Analytics choices** button reopens the choice. Declining leaves the site available; withdrawing a previous Allow first disables sends and clears this implementation's analytics cookies. It reloads to unload Google's code only after reading back a saved Decline. If neither store can retain the refusal, analytics stays disabled on the current page and a visible notice explains that the choice could not be saved. Cross-tab denial events also stop analytics even when storage still returns old data. With JavaScript disabled, analytics stays off.
+
+The script runs only on public content pages at the configured `base_url` origin, excluding previews and the 404 page. It sends one manual `page_view` per page load, with `page_location` limited to origin and pathname and `page_referrer` stripped of query and fragment. It does not read or send input/search/form content or add a user ID. Advertising consent remains denied, Google signals and ad personalization are disabled, and the analytics cookies use the `sept` prefix with a 180-day maximum lifetime. Google's [privacy controls](https://developers.google.com/tag-platform/security/guides/privacy) describe the opt-out flag and advertising settings. Disabling Enhanced measurement in the stream is required: `send_page_view: false` alone does not stop its automatic events.
+
+The footer includes the visitor-facing privacy details, including the site's existing GitHub Pages hosting and Google Fonts requests. The consent-script regression runs with Node.js's built-in VM during the Python test suite when Node is available; it makes no network requests and needs no packages. Run it directly with `node tests/analytics.test.js`.
 
 ## Deploy with GitHub Pages
 

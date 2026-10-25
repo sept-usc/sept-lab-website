@@ -773,6 +773,47 @@ html.js .vision__art { padding-bottom: 32px; }
 .back-to-top:hover { color: var(--accent); }
 .chevron { display: block; }
 
+/* Optional analytics uses the site's existing text-button style. It never blocks reading. */
+.privacy-links { margin-top: 8px; font-size: 14px; line-height: 1.5; }
+.privacy-note { margin-bottom: 8px; }
+.privacy-note summary { width: fit-content; color: var(--accent); cursor: pointer; }
+.privacy-note p { max-width: 76ch; margin: 8px 0; }
+.privacy-button {
+  appearance: none;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.14em;
+  cursor: pointer;
+}
+.privacy-button:hover { color: var(--accent-hover); }
+.privacy-button[hidden], .analytics-choice[hidden] { display: none; }
+.analytics-choice {
+  position: fixed;
+  z-index: 100;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  max-width: 680px;
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  margin: 0 auto;
+  padding: 18px 22px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--text);
+  box-shadow: 0 4px 20px #0002;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.analytics-choice h2 { margin-bottom: 8px; font-size: 20px; }
+.analytics-choice p { margin-bottom: 8px; }
+.analytics-state { color: var(--muted); }
+.analytics-actions { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+
 /* ---------- Breakpoints (from comsec's theme: 850, 768, 540, 480 px) ---------- */
 
 /* Just above 850 px a 25% sidebar would be about 170 px wide and break every headline into three
@@ -906,6 +947,7 @@ html.js .vision__art { padding-bottom: 32px; }
 /* ---------- Print ---------- */
 
 @media print {
+  .analytics-choice, .privacy-button { display: none; }
   html { font-size: 11pt; }
   body { color: #000; }
   .skip-link, .site-nav, .sidebar, .back-to-top { display: none !important; }
