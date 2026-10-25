@@ -1,6 +1,8 @@
 """Integration checks for discovery outputs against the site's actual content."""
 
 import copy
+from contextlib import redirect_stdout
+import io
 import json
 from html import escape, unescape
 from html.parser import HTMLParser
@@ -9,6 +11,7 @@ import re
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from urllib.parse import unquote, urlsplit
 from xml.etree import ElementTree
 
@@ -19,6 +22,7 @@ if str(ROOT) not in sys.path:
 
 import build
 import site_discovery
+from tools import indexnow
 
 
 class HTMLSnapshot(HTMLParser):
@@ -144,6 +148,55 @@ class DiscoveryIntegrationTests(unittest.TestCase):
         self.assertFalse(self.html["404.html"].structured)
         self.assertNotIn("404.md", self.pages)
         self.assertIn("Sitemap: " + self.base + "/sitemap.xml", self.pages["robots.txt"])
+
+    def test_indexnow_key_is_published_at_root_and_kept_out_of_the_sitemap(self):
+        config = self.ctx["indexnow"]
+        self.assertEqual(config["host"], urlsplit(self.base).netloc)
+        filename = config["key"] + ".txt"
+        self.assertEqual(self.pages[filename], config["key"] + "\n")
+        self.assertNotIn(filename, self.pages["sitemap.xml"])
+        self.assertNotIn(filename, self.pages["llms.txt"])
+
+    def test_indexnow_plan_matches_the_real_sitemap_and_skips_unchanged_builds(self):
+        with tempfile.TemporaryDirectory(prefix="sept-indexnow-plan-") as temporary:
+            root = Path(temporary)
+            output = root / "site"
+            build.write(self.pages, output)
+            current = indexnow.snapshot(output, self.ctx["indexnow"])
+            expected = {self.html[name].canonicals[0] for name in build.PAGES.values()}
+            self.assertEqual(set(current), expected)
+            state = root / "state.json"
+            indexnow.write_state(state, self.ctx["indexnow"]["host"], current)
+            before = state.read_bytes()
+            with (patch.object(indexnow, "verify_live_key") as verify,
+                  patch.object(indexnow, "submit") as submit,
+                  redirect_stdout(io.StringIO())):
+                result = indexnow.main(["--site-dir", str(output), "--config", str(ROOT / "indexnow.json"),
+                                        "--state", str(state)])
+            self.assertEqual(result, 0)
+            verify.assert_not_called()
+            submit.assert_not_called()
+            self.assertEqual(state.read_bytes(), before)
+
+    def test_indexnow_config_rejects_wrong_hosts_unsafe_keys_and_unknown_fields(self):
+        with tempfile.TemporaryDirectory(prefix="sept-indexnow-config-") as temporary:
+            root = Path(temporary)
+            path = root / "indexnow.json"
+            self.assertEqual(site_discovery.load_indexnow(root, self.ctx["site"]), {})
+            for config in ({"host": "other.example", "key": "a" * 32},
+                           {"host": "septlab.com", "key": "../index"},
+                           {"host": "septlab.com", "key": 123},
+                           {"host": "septlab.com", "key": "a" * 32, "unknown": True}, []):
+                with self.subTest(config=config):
+                    path.write_text(json.dumps(config), encoding="utf-8")
+                    with self.assertRaises(ValueError):
+                        site_discovery.load_indexnow(root, self.ctx["site"])
+            path.write_text("{invalid", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                site_discovery.load_indexnow(root, self.ctx["site"])
+            path.write_text(json.dumps(self.ctx["indexnow"]), encoding="utf-8")
+            self.assertEqual(site_discovery.load_indexnow(root, self.ctx["site"]), self.ctx["indexnow"])
+            self.assertEqual(site_discovery.load_indexnow(root, {"base_url": ""}), {})
 
     def test_each_public_page_has_clear_metadata_and_the_complete_real_navigation(self):
         titles, descriptions = [], []
@@ -396,6 +449,7 @@ class DiscoveryIntegrationTests(unittest.TestCase):
             output = Path(temporary) / "site"
             build.write(self.pages, output)
             expected = {"robots.txt", "sitemap.xml", "llms.txt", "llms-full.txt"}
+            expected.add(self.ctx["indexnow"]["key"] + ".txt")
             expected.update(name[:-5] + ".md" for name in build.PAGES.values())
             for name in expected:
                 self.assertEqual((output / name).read_text(), self.pages[name])
@@ -407,6 +461,20 @@ class DiscoveryIntegrationTests(unittest.TestCase):
                 build.write(self.pages, output)
             self.assertEqual(note.read_text(), "Keep this user file.\n")
             self.assertEqual((output / "index.html").read_text(), original_index)
+
+    def test_key_rotation_removes_only_matching_generated_key_files(self):
+        with tempfile.TemporaryDirectory(prefix="sept-indexnow-key-") as temporary:
+            output = Path(temporary) / "site"
+            build.write(self.pages, output)
+            old_key = "b" * 32
+            old_file = output / (old_key + ".txt")
+            old_file.write_text(old_key + "\n", encoding="utf-8")
+            build.write(self.pages, output)
+            self.assertFalse(old_file.exists())
+            old_file.write_text("Keep this unrelated note.", encoding="utf-8")
+            with self.assertRaises(SystemExit):
+                build.write(self.pages, output)
+            self.assertEqual(old_file.read_text(encoding="utf-8"), "Keep this unrelated note.")
 
     def test_empty_base_url_does_not_claim_a_canonical_origin(self):
         ctx = copy.deepcopy(self.ctx)
@@ -420,6 +488,7 @@ class DiscoveryIntegrationTests(unittest.TestCase):
         root = ElementTree.fromstring(pages["sitemap.xml"])
         self.assertEqual(len(root), 0)
         self.assertNotIn("Sitemap:", pages["robots.txt"])
+        self.assertNotIn(self.ctx["indexnow"]["key"] + ".txt", pages)
 
 
 if __name__ == "__main__":

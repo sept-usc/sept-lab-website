@@ -4,15 +4,50 @@ These files describe the same public pages; they do not promise indexing or rank
 No generated dates, affiliations or publication status are inferred.
 """
 
+import json
 import re
 from html import escape
 from html.parser import HTMLParser
-from urllib.parse import quote, urljoin
+from urllib.parse import quote, urljoin, urlsplit
 from xml.etree import ElementTree
 
 
 SCHEMA = "https://schema.org"
 MACHINE_FILES = {"robots.txt", "sitemap.xml", "llms.txt", "llms-full.txt"}
+INDEXNOW_KEY_RE = re.compile(r"[a-f0-9]{32}")
+
+
+def load_indexnow(root, site):
+    """Load the optional public ownership key, scoped to the configured production host."""
+    path = root / "indexnow.json"
+    if not path.is_file():
+        return {}
+    try:
+        config = json.loads(path.read_text(encoding="utf-8"))
+    except (ValueError, OSError) as exc:
+        raise ValueError("indexnow.json: could not read valid JSON ({})".format(exc)) from exc
+    if not isinstance(config, dict) or set(config) != {"host", "key"}:
+        raise ValueError("indexnow.json: expected only host and key fields")
+    if not isinstance(config["key"], str) or not INDEXNOW_KEY_RE.fullmatch(config["key"]):
+        raise ValueError("indexnow.json: key must contain 32 lowercase hexadecimal characters")
+    if not isinstance(config["host"], str) or not re.fullmatch(r"[a-z0-9]+(?:[.-][a-z0-9]+)+", config["host"]):
+        raise ValueError("indexnow.json: host must be a lowercase DNS hostname")
+    base = site.get("base_url") or ""
+    if not isinstance(base, str) or not base:
+        return {}  # A preview without a configured canonical origin publishes no ownership key.
+    if config["host"] != urlsplit(base).netloc:
+        raise ValueError("indexnow.json: host must match the base_url host in data/site.json")
+    return config
+
+
+def is_indexnow_key_file(path):
+    """Recognize only a generated key whose filename and text agree, including an old key."""
+    if path.suffix != ".txt" or INDEXNOW_KEY_RE.fullmatch(path.stem) is None or not path.is_file():
+        return False
+    try:
+        return path.read_text(encoding="utf-8").strip() == path.stem
+    except (UnicodeError, OSError):
+        return False
 
 
 def canonical(site, file_name):
@@ -280,4 +315,7 @@ def files(ctx, pages, page_files):
     guide += ["", "## Full text", "", "- [All public pages]({})".format(markdown_destination(base + "/llms-full.txt" if base else "llms-full.txt")), ""]
     output["llms.txt"] = "\n".join(guide)
     output["llms-full.txt"] = "\n---\n\n".join(texts)
+    config = ctx.get("indexnow") or {}
+    if base and config:
+        output[config["key"] + ".txt"] = config["key"] + "\n"
     return output

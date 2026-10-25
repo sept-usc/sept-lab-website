@@ -75,6 +75,23 @@ The text exports leave out navigation, sidebars and the optional game. Edit the 
 
 For Google and Bing, submit `https://septlab.com/sitemap.xml` through the site's verified webmaster account. Google's [organization](https://developers.google.com/search/docs/appearance/structured-data/organization) and [site-name](https://developers.google.com/search/docs/appearance/site-names) guidance explain the identity metadata. The text exports help direct agent readers; Google Search, including its [AI features](https://developers.google.com/search/docs/appearance/ai-features), uses the standard search requirements and does not require these extra files.
 
+[OpenAI's crawler documentation](https://developers.openai.com/api/docs/bots) distinguishes `OAI-SearchBot`, which discovers pages for ChatGPT search, from `GPTBot`, which crawls material that may be used for model training. The site's `User-agent: *` / `Allow: /` policy permits both. `ChatGPT-User` fetches pages in response to a user's action; allowing it alone does not control search inclusion. Keep the public pages available without a login or a crawler challenge, including when changing hosting providers. Allowing a crawler makes the pages eligible for discovery; it does not guarantee that a search or an answer will cite them.
+
+### Notify search engines after publishing
+
+After a successful deployment, the Pages workflow submits added, changed and removed canonical pages through [IndexNow](https://www.indexnow.org/documentation). The public `indexnow.json` file selects this site's host and ownership key. The builder checks that the host matches `data/site.json` and publishes `<key>.txt` at the site root; the key is a public ownership record, not an account credential. The script checks the live key before sending a submission. It uses the sitemap to select public pages and compares meaningful page content with the last accepted state, cached by the workflow. An unchanged build sends no notification. The first run, or a run after GitHub evicts that cache, initializes the state by submitting the eight public pages.
+
+Check the payload locally without sending it:
+
+```sh
+python3 build.py
+python3 tools/indexnow.py --site-dir dist --config indexnow.json --state .indexnow-state.json --dry-run
+```
+
+The `notify-search` job runs after publishing, so a submission failure does not undo the deployment. Fix the reported error and rerun the failed job; failed requests do not advance its accepted state. Keep `indexnow.json` and its generated key file together when rotating the key. The local `.indexnow-state.json` is ignored by Git.
+
+IndexNow shares change notifications with participating search engines. A successful response means the notification was received; it does not guarantee crawling, indexing or ranking. Google Search Console and Bing Webmaster Tools remain the places to check each site's sitemap and actual index status. This workflow does not submit directly to Google or OpenAI.
+
 ## Optional analytics
 
 Analytics is off while `analytics.measurement_id` in [data/site.json](data/site.json) is empty. To enable GA4, first turn **Enhanced measurement off** for the web data stream, including history-based page views, site search, outbound clicks, downloads, video and form interactions. Keep Google signals and advertising personalization off, and do not connect advertising tags. Then set the stream's public `G-...` measurement ID and rebuild. The ID is not a secret; no API key belongs in this repository.
@@ -143,10 +160,12 @@ The social-preview image is `assets/img/og-image.jpg`. Its helper, [tools/og_ima
 ```text
 build.py                  Data validation and HTML rendering
 site_discovery.py         Search metadata, sitemap and text exports
+indexnow.json             Public host and ownership key for change notifications
 data/                     Editable website content
 assets/                   Published styles, scripts, and images
 design/                   Image masters and illustration generators
 tools/check_links.py      Local link, anchor, and ID validation
+tools/indexnow.py         Submit changed canonical pages after deployment
 tools/og_image.py          Social-preview image helper
 tests/                    Generator and discovery integration tests
 .github/workflows/        Build checks and GitHub Pages deployment
