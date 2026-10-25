@@ -1297,7 +1297,7 @@ def head(ctx, page_id, title, description):
 <meta property="og:title" content="{esc(full_title)}">
 <meta property="og:description" content="{esc(description)}">
 {meta_lines}
-<link rel="icon" href="{icon_href('favicon.svg')}" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="16x16" href="{icon_href('favicon-16.png')}">
 <link rel="icon" type="image/png" sizes="32x32" href="{icon_href('favicon-32.png')}">
 <link rel="icon" type="image/png" sizes="192x192" href="{icon_href('icon-192.png')}">
 <link rel="apple-touch-icon" href="{icon_href('apple-touch-icon.png')}">

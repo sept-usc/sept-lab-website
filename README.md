@@ -116,7 +116,7 @@ The site uses responsive CSS and progressive enhancement: the research text, nav
 
 Edit the layout and typography in [assets/css/style.css](assets/css/style.css). Page templates are in [build.py](build.py); [assets/js/site.js](assets/js/site.js) handles navigation, motion controls, and the journey loader. The journey has its own [stylesheet](assets/css/journey.css) and [script](assets/js/journey.js).
 
-The small icons use [assets/img/favicon.svg](assets/img/favicon.svg), which keeps the tree and a seated thinker readable at tab sizes. With Node.js and `sharp` available, run `node tools/favicons.cjs` to regenerate the 512 px master, the 32/192 px PNGs and the Apple touch icon. Normal site builds use the committed exports. The generated HTML versions the icon URLs by content so updated icons replace cached copies.
+The small icons use the same original mark as the page header, selected by `lockup.mark` in [data/site.json](data/site.json). With Node.js and `sharp` available, run `node tools/favicons.cjs` to export the 16/32/192 px PNGs, the Apple touch icon and a 512 px preview. The exporter preserves the original proportions and composition, adding only square padding. Normal site builds use the committed exports. The generated HTML versions the icon URLs by content so updated icons replace cached copies.
 
 The vision image and research icons have editable Python generators in [design/vision/](design/vision/). Regenerate the masters and copy them into the published assets:
 
