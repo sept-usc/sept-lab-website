@@ -20,6 +20,7 @@ To validate the data and render every page without writing output:
 
 ```sh
 python3 build.py --check
+python3 -m unittest discover -s tests -v
 ```
 
 To build elsewhere, choose a new or empty directory, or one containing only an earlier build:
@@ -53,6 +54,24 @@ News dates accept `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`; each item's date and `slug
 Paragraph fields such as homepage `about`, research `description`, and news `body` support `[label](url)`, `**bold**`, and `*italic*`. Names, titles, summaries, and topic labels are plain text. Use relative site links such as `publications.html#wave-asplos26`; links beginning with `/` are rejected because the site can be hosted under a repository path. External links may use HTTP, HTTPS, or `mailto:`.
 
 The builder reports unknown fields, invalid dates and URLs, duplicate IDs, and unresolved references. Keep `site.json` homepage text consistent with the research directions when changing the lab's mission.
+
+## Search and agent-readable files
+
+With `base_url` set, every public page has its own title, description and canonical URL. JSON-LD describes the lab, its website, the PI, people, research subjects and the publications that are visible on the site. PI profiles belong to the PI; alumni are not marked as current members. Paper records retain their supplied year without an invented publication day.
+
+The build also writes:
+
+| File | Purpose |
+| --- | --- |
+| `robots.txt` | Allows crawling and points to the sitemap |
+| `sitemap.xml` | Lists the eight canonical public HTML pages, excluding the 404 page |
+| `index.md`, `people.md`, and other page-matched Markdown files | Main-column content with links, generated from the rendered HTML |
+| `llms.txt` | A short guide to the official pages and their text copies |
+| `llms-full.txt` | The combined text of those pages |
+
+The text exports leave out navigation, sidebars and the optional game. Edit the JSON content and rebuild to keep HTML and text aligned. A content page links its Markdown copy in the document head. The 404 page remains `noindex` and has no canonical URL or text copy.
+
+For Google and Bing, submit `https://septlab.com/sitemap.xml` through the site's verified webmaster account. Google's [organization](https://developers.google.com/search/docs/appearance/structured-data/organization) and [site-name](https://developers.google.com/search/docs/appearance/site-names) guidance explain the identity metadata. The text exports help direct agent readers; Google Search, including its [AI features](https://developers.google.com/search/docs/appearance/ai-features), uses the standard search requirements and does not require these extra files.
 
 ## Deploy with GitHub Pages
 
@@ -109,11 +128,13 @@ The social-preview image is `assets/img/og-image.jpg`. Its helper, [tools/og_ima
 
 ```text
 build.py                  Data validation and HTML rendering
+site_discovery.py         Search metadata, sitemap and text exports
 data/                     Editable website content
 assets/                   Published styles, scripts, and images
 design/                   Image masters and illustration generators
 tools/check_links.py      Local link, anchor, and ID validation
 tools/og_image.py          Social-preview image helper
+tests/                    Generator and discovery integration tests
 .github/workflows/        Build checks and GitHub Pages deployment
 dist/                     Generated site, ignored by Git
 ```

@@ -19,7 +19,7 @@ Usage:
 
 The output directory is replaced on every build, so --out accepts only a new or
 empty directory or one that holds nothing but an earlier build's output (HTML
-pages, assets/ and the .nojekyll file every build writes).
+pages, generated discovery files, assets/ and the .nojekyll file every build writes).
 To build a temporary preview:
     python3 build.py --out "$TMPDIR/sept-preview" && python3 tools/check_links.py "$TMPDIR/sept-preview"
 
@@ -40,6 +40,8 @@ import xml.parsers.expat
 from xml.etree import ElementTree
 from pathlib import Path, PurePosixPath
 from urllib.parse import quote
+
+import site_discovery
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
@@ -1236,7 +1238,7 @@ def head(ctx, page_id, title, description):
     if page_id == "home":
         full_title = site["home"].get("title") or f"{site['name']} · {title}"
     else:
-        full_title = f"{title} · {site['name']}"
+        full_title = f"{title} · {site['name']} at {site['institution_short']}"
     meta = []
     if not file_name:
         meta.append('<meta name="robots" content="noindex">')
@@ -1244,6 +1246,9 @@ def head(ctx, page_id, title, description):
         page_url = f"{base}/" if page_id == "home" else f"{base}/{file_name}"
         meta.append(f'<link rel="canonical" href="{esc(page_url)}">')
         meta.append(f'<meta property="og:url" content="{esc(page_url)}">')
+        meta.append(f'<link rel="alternate" type="text/markdown" href="{esc(file_name[:-5] + ".md")}">')
+        structured = site_discovery.structured_data(ctx, page_id, full_title, description, page_url, project_anchor)
+        meta.append('<script type="application/ld+json">' + script_json(structured) + '</script>')
     og = site.get("og_image") or {}
     # Social platforms ignore relative image URLs, so the image is announced only
     # once base_url is known.
@@ -2319,11 +2324,12 @@ def render_all(ctx):
     pages["404.html"] = page_not_found(ctx)  # not in PAGES, so it has no menu entry
     check_rendered(pages)
     ERRORS.raise_if_any()  # inline markup and ids are validated while rendering
+    pages.update(site_discovery.files(ctx, pages, PAGES))
     return pages
 
 
 def is_build_output(path):
-    """True for a top-level entry that a build writes: an HTML page, assets/, .nojekyll,
+    """True for a generated page, known discovery file, assets/, .nojekyll,
     or the .DS_Store that Finder adds."""
     if path.is_symlink():
         return False
@@ -2331,11 +2337,13 @@ def is_build_output(path):
         return path.is_file()
     if path.name == "assets":
         return path.is_dir()
+    if path.name in site_discovery.MACHINE_FILES or path.name in {p[:-5] + ".md" for p in PAGES.values()}:
+        return path.is_file()
     return path.suffix == ".html" and path.is_file()
 
 
 def write(pages, out):
-    """Replace the output directory with the pages, assets/ and .nojekyll.
+    """Replace the output directory with pages, discovery files, assets/ and .nojekyll.
 
     The directory is deleted first, so it must not be the project or hold its sources. An existing
     directory may hold only what a build writes, and if it holds anything besides Finder's .DS_Store
@@ -2376,14 +2384,16 @@ def main(argv):
     args = parser.parse_args(argv)
     ctx = load_all()
     pages = render_all(ctx)
+    html_count = sum(name.endswith(".html") for name in pages)
+    discovery_count = len(pages) - html_count
     for warning in dict.fromkeys(WARNINGS):
         print(f"build.py: warning: {warning}", file=sys.stderr)
     if args.check:
-        print(f"build.py: data files are valid and all {len(pages)} pages render.")
+        print(f"build.py: data files are valid; {html_count} HTML pages and {discovery_count} discovery files render.")
         return
     out = write(pages, args.out)
     shown = f"{out.relative_to(ROOT)}/" if ROOT in out.parents else f"{out}/"
-    print(f"build.py: wrote {len(pages)} pages to {shown}")
+    print(f"build.py: wrote {html_count} HTML pages and {discovery_count} discovery files to {shown}")
     print(f"build.py: preview: {(out / 'index.html').as_uri()}")
     if not ctx["site"].get("base_url"):
         print("build.py: warning: site.json base_url is empty, so pages have no canonical URL and "
