@@ -20,7 +20,7 @@
     }
   ],
   "alumni": [
-    {"name": "Anna Li", "role": "Undergraduate student", "now": "a PhD student at UIUC", "url": ""},
+    {"name": "Anna Li", "role": "Undergraduate student", "now": "PhD student at UIUC", "url": ""},
     {"name": "Vivan Doshi", "role": "High school student", "now": "an undergraduate at UC Berkeley", "url": ""}
   ]
 }

@@ -1931,8 +1931,8 @@ def page_people(ctx):
     """Plain lists, as in comsec's "Graduated doctoral students": the PI under the role heading (the
     name in bold, linked to the homepage, and the title), then each group in people.json and the
     alumni as bulleted lists. No photos, cards, avatars or bios. Every line is the name in bold, then
-    the details after a comma, and further notes after a comma or a semicolon, never in parentheses:
-    "**Haoyan Xu**, co-advised with Prof. Yue Zhao", "**Vivan Doshi**, High school student; now an
+    the details after a comma, and alumni destinations after an arrow:
+    "**Haoyan Xu**, co-advised with Prof. Yue Zhao", "**Vivan Doshi**, High school student -> an
     undergraduate at UC Berkeley"."""
     site = ctx["site"]
     people = ctx["people"]
@@ -1966,7 +1966,7 @@ def page_people(ctx):
             if a.get("note"):
                 line += f'; {inline(a["note"], "people.json.alumni.note")}'
             if a.get("now"):
-                line += f'; now {esc(a["now"])}'
+                line += f' -&gt; {esc(a["now"])}'
             items.append(f"  <li>{line}</li>")
         parts.append('<h2 id="alumni-h">Alumni</h2>\n<ul class="people-list">\n' + "\n".join(items) + "\n</ul>")
     if groups:
