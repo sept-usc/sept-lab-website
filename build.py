@@ -1298,6 +1298,18 @@ def site_title(site):
     return f"{expansion} {site['wordmark'].get('rest') or ''}".strip()
 
 
+def site_title_html(site):
+    """Highlight SE, P and T while keeping the full lab name as ordinary text."""
+    title = site_title(site)
+    expansion = "Security, Privacy, and Trust"
+    if site.get("expansion") != expansion:
+        return esc(title)
+    return ('<span class="site-title__initial site-title__initial--gold">Se</span>curity, '
+            '<span class="site-title__initial">P</span>rivacy, and '
+            '<span class="site-title__initial site-title__initial--gold">T</span>rust'
+            + esc(title[len(expansion):]))
+
+
 def two_lines(text):
     """Split a short phrase into two lines of similar length ("University of" / "Southern California")."""
     words = text.split()
@@ -1322,6 +1334,7 @@ def header(ctx, page_id):
         aff_html = (f'\n    <span class="lockup__rule" aria-hidden="true"></span>'
                     f'\n    <span class="lockup__inst">{lines}</span>')
     tag = "h1" if page_id == "home" else "p"
+    title_label = f' aria-label="{esc(site_title(site))}"' if page_id == "home" else ""
     items = []
     for item in site["nav"]:
         current = ' aria-current="page"' if item["page"] == page_id else ""
@@ -1334,7 +1347,7 @@ def header(ctx, page_id):
     <span class="lockup__name">{brand_name(site)}</span>{aff_html}
     <span class="visually-hidden">, home</span>
   </a>
-  <{tag} class="site-title">{esc(site_title(site))}</{tag}>
+  <{tag} class="site-title"{title_label}>{site_title_html(site)}</{tag}>
 </header>
 <nav class="site-nav" aria-label="Main">
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">{MENU_ICON}<span>Menu</span></button>
@@ -1586,7 +1599,8 @@ JOURNEY_LINK = (f'<a class="journey-link" id="journey-open" href="#journey" aria
                 '<svg class="journey-link__fig" viewBox="0 0 7 13" width="7" height="13" fill="currentColor" '
                 'aria-hidden="true" focusable="false">'
                 + "".join(f'<path class="journey-link__{name}" d="{pixel_path(rows)}"/>' for name, rows in WALKER.items())
-                + '</svg><span class="journey-link__text">Start the journey</span></a>')
+                + '</svg><span class="journey-link__text">Start the journey</span>'
+                '<span class="journey-link__arrow" aria-hidden="true">&#8594;</span></a>')
 
 
 def vision_figure(vision):
