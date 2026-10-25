@@ -2007,7 +2007,7 @@ def page_people(ctx):
     name in bold, linked to the homepage, and the title), then each group in people.json and the
     alumni as bulleted lists. No photos, cards, avatars or bios. Every line is the name in bold, then
     the details after a comma, and alumni destinations after an arrow:
-    "**Haoyan Xu**, co-advised with Prof. Yue Zhao", "**Vivan Doshi**, High school student -> an
+    "**Haoyan Xu**, co-advised with Prof. Yue Zhao", "**Vivan Doshi**, High school student ->
     undergraduate at UC Berkeley"."""
     site = ctx["site"]
     people = ctx["people"]
