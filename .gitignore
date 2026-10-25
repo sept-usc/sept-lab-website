@@ -1,5 +1,6 @@
 # Build output (regenerate with: python3 build.py)
 dist/
+.indexnow-state.json
 
 # Python and OS clutter
 __pycache__/

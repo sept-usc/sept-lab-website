@@ -84,3 +84,66 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+  notify-search:
+    name: Notify search engines of changed pages
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Search service failures are visible here without failing an already published site.
+    continue-on-error: true
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out the deployed revision
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Rebuild the deployed pages for change detection
+        run: python build.py
+
+      - name: Restore the last accepted IndexNow state
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: .indexnow-state.json
+          key: indexnow-v1-${{ hashFiles('indexnow.json') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: indexnow-v1-${{ hashFiles('indexnow.json') }}-
+
+      - name: Submit changed and removed canonical pages
+        id: notify
+        run: >-
+          python tools/indexnow.py --site-dir dist --config indexnow.json
+          --state .indexnow-state.json --key-attempts 12 --key-delay 10
+          2>&1 | tee "$RUNNER_TEMP/indexnow.txt"
+
+      - name: Remember the accepted submission
+        if: always() && hashFiles('.indexnow-state.json') != ''
+        uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: .indexnow-state.json
+          key: indexnow-v1-${{ hashFiles('indexnow.json') }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Report the notification result
+        if: always()
+        env:
+          NOTIFY_OUTCOME: ${{ steps.notify.outcome }}
+        run: |
+          {
+            echo "### IndexNow"
+            echo
+            if [ -f "$RUNNER_TEMP/indexnow.txt" ]; then
+              echo '```text'
+              cat "$RUNNER_TEMP/indexnow.txt"
+              echo '```'
+            fi
+            echo
+            echo 'Receipt does not establish crawling, indexing or an AI citation. This does not submit directly to Google or OpenAI.'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$NOTIFY_OUTCOME" != success ]; then
+            echo '::warning::IndexNow notification did not complete. The site is deployed; inspect this job and retry. Unreceived URLs retain their previous state.'
+          fi

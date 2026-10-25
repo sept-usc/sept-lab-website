@@ -2307,6 +2307,10 @@ def load_all():
         "join": load_join(),
         "contact": load_contact(),
     }
+    try:
+        ctx["indexnow"] = site_discovery.load_indexnow(ROOT, site)
+    except ValueError as exc:
+        ERRORS.add("search notifications", str(exc))
     cross_check(ctx, all_pubs)
     load_graphics(ctx)
     ERRORS.raise_if_any()
@@ -2412,7 +2416,9 @@ def is_build_output(path):
         return path.is_file()
     if path.name == "assets":
         return path.is_dir()
-    if path.name in site_discovery.MACHINE_FILES or path.name in {p[:-5] + ".md" for p in PAGES.values()}:
+    if (path.name in site_discovery.MACHINE_FILES
+            or path.name in {p[:-5] + ".md" for p in PAGES.values()}
+            or site_discovery.is_indexnow_key_file(path)):
         return path.is_file()
     return path.suffix == ".html" and path.is_file()
 
