@@ -15,7 +15,9 @@
     {
       "title": "MS students",
       "members": [
-        {"name": "Tianqi Shen", "role": "MS student", "url": ""}
+        {"name": "Tianqi Shen", "role": "MS student", "url": ""},
+        {"name": "Chengyuan Wang", "role": "MS student", "url": ""},
+        {"name": "Kishore Babu Radhika", "role": "MS student", "url": ""}
       ]
     }
   ],
