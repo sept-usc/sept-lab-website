@@ -11,12 +11,12 @@
       "title": "Verifiable AI",
       "short": "Verifiable AI",
       "layer": "Models",
-      "summary": "Evidence about what model ran, how it ran, and whether its results can be trusted, without revealing sensitive data.",
+      "summary": "Evidence about which model and computation produced a result, and the limits of that evidence, without revealing sensitive data.",
       "topics": ["zero-knowledge verification", "LLM inference", "model oversight", "architecture observation"],
       "topic_line": "zero-knowledge verification · LLM inference · model oversight",
       "description": [
         "As AI systems enter high-stakes workflows, users need evidence that a result came from the claimed model and computation, ideally without revealing sensitive data. We study how such evidence can be produced for LLM inference and where proof-based (zero-knowledge) approaches fail. Hollow-LLM Attack identifies a security problem in zero-knowledge verification of LLM inference, while WAVE uses architecture-level observation to oversee model execution without exposing model data.",
-        "SEPT Lab also maintains [verifiable.pro](https://verifiable.pro/), a public resource on verifiable AI, starting with trusted execution environments. It offers news, explainers, and guides on what evidence can establish about an AI service's claims, and where the limits remain."
+        "SEPT Lab also maintains [verifiable.pro](https://verifiable.pro/), an English and Simplified Chinese publication on verifiable AI. Its [learning guides](https://verifiable.pro/learn/) explain what evidence can establish about model identity, data privacy and agent behavior, and where the limits remain. Start with [what makes an AI system verifiable](https://verifiable.pro/articles/what-makes-an-ai-system-verifiable/) or the [comparison of proofs, enclaves and re-execution](https://verifiable.pro/articles/proofs-enclaves-and-re-execution-compared/)."
       ],
       "papers": ["hollow-llm-sp26", "wave-asplos26"]
     },
