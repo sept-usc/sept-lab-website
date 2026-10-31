@@ -42,7 +42,7 @@
       "alt": "Isometric drawing of four stacked layers, Hardware, Systems, Models, and Agents, joined by one red chain of trust."
     },
     "about": [
-      "SEPT Lab (Security, Privacy, and Trust) is a research lab in the [Thomas Lord Department of Computer Science](https://www.cs.usc.edu/) at the University of Southern California. SEPT Lab is led by [Prof. Mengyuan Li](https://mengyuan-l.github.io/).",
+      "SEPT Lab (Security, Privacy, and Trust) is a research lab in the [Thomas Lord Department of Computer Science](https://www.cs.usc.edu/) at the University of Southern California. SEPT Lab is led by [Prof. Mengyuan Li](https://mengyuanli.com/).",
       "SEPT Lab designs trustworthy computing environments by tightly integrating hardware security mechanisms with software systems, so that private data and programs stay protected on platforms from personal devices to cloud AI systems. Our research has two thrusts: uncovering, understanding, and defending against system and hardware vulnerabilities across cloud systems, CPUs, GPUs, and AI systems; and co-designing software and hardware for secure and efficient AI systems. Please refer to our [publications](publications.html) to see examples of our research.",
       "We also teach [graduate courses](teaching.html) on confidential computing, side channels, and systems security at USC.",
       "We are looking for motivated PhD, MS, and undergraduate students; see how to [join SEPT Lab](join.html)."
