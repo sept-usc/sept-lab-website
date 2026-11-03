@@ -4,6 +4,7 @@
     "scholar": "https://scholar.google.com/citations?user=cgjqyuoAAAAJ"
   },
   "since": 2024,
+  "advisees": ["Yongqin Wang"],
   "publications": [
     {
       "id": "tpuzz-ndss27",

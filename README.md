@@ -49,6 +49,8 @@ Edit the corresponding file under [data/](data/), then rebuild and check links.
 
 Keep publication and research IDs stable: they form page anchors and connect records across files. Publication `themes` must match research theme IDs, and representative `papers` must refer to published entries. The optional publication `since` year controls which entries appear on the site. Lab members are bolded in author lists when their names match `people.json` exactly.
 
+The optional top-level `advisees` list in `publications.json` adds names to author emphasis without changing the People page or their lab affiliation.
+
 For an accepted paper whose public paper URL or DOI is not available yet, omit `url` and add any available citation links in `links`. Its structured-data URL will point to its entry on the publications page.
 
 News dates accept `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`; each item's date and `slug` form its anchor. Use only the date precision the announcement supports.

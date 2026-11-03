@@ -101,7 +101,7 @@ KEYS = {
     "group": {"title", "members"},
     "member": {"name", "role", "note", "url"},
     "alumnus": {"name", "role", "years", "now", "note", "url"},
-    "publications": {"profiles", "since", "publications"},
+    "publications": {"profiles", "since", "advisees", "publications"},
     "publication": {"id", "title", "authors", "venue", "venue_short", "year", "kind", "themes", "url", "pdf",
                     "code", "award", "equal_contribution", "links", "disclosures", "note"},
     "news": {"items"},
@@ -617,6 +617,8 @@ def load_publications():
     for key, url in profiles.items():
         check_url(url, f"{w}.profiles.{key}", local_ok=False)
     field(data, "since", "int", w, required=False)
+    for i, name in enumerate(field(data, "advisees", "list", w, required=False, default=[])):
+        expect(name, "str", f"{w}.advisees[{i}]")
     seen = set()
     for pw, pub in objects(field(data, "publications", "list", w, default=[]), "publication",
                            f"{w}.publications"):
@@ -1569,11 +1571,12 @@ def link_label(url, default):
 
 
 def lab_names(ctx):
-    """Names of the PI, current members and alumni, which are shown in bold in author lists."""
+    """Names of the PI, lab members, alumni and advisees, shown in bold in author lists."""
     people = ctx["people"]
     names = {people["pi"]["name"]}
     names.update(m["name"] for g in people.get("groups", []) for m in g.get("members", []))
     names.update(a["name"] for a in people.get("alumni") or [])
+    names.update(ctx["publications"].get("advisees") or [])
     return names
 
 
@@ -1630,7 +1633,7 @@ def pub_entry(ctx, pub, lab, level=3, full=False):
 
 def bold_note(pubs):
     any_eq = any(p.get("equal_contribution") for p in pubs)
-    return "Lab members are shown in bold." + (" An asterisk (*) marks equal contribution." if any_eq else "")
+    return "Lab members and advisees are shown in bold." + (" An asterisk (*) marks equal contribution." if any_eq else "")
 
 
 def project_anchor(project):

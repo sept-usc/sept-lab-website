@@ -1,6 +1,27 @@
 {
   "items": [
     {
+      "date": "2026-11",
+      "slug": "ndss-2027-papers",
+      "category": "Paper",
+      "title": "Two papers accepted to NDSS 2027",
+      "body": "[TPUZZ: Cross-Domain State-Aware Fuzzing of Google Pixel TPU](publications.html#tpuzz-ndss27) and [Hardware-Rooted Inference-Time Verification for LLM Execution on Untrusted GPUs (ARGUS)](publications.html#argus-ndss27) have been accepted to NDSS 2027."
+    },
+    {
+      "date": "2026-11",
+      "slug": "ccs-2026-papers",
+      "category": "Paper",
+      "title": "Two papers accepted to ACM CCS 2026",
+      "body": "[From Fault to Oracle: Breaking Google Pixel TPU Hardware Memory Isolation via Trusted Deserialization Faults](publications.html#fault-oracle-ccs26) and [Trapped Handler: A Practical Performance Degradation Attack on NVIDIA vGPU via Preemption Manipulation](publications.html#trapped-handler-ccs26) have been accepted to ACM CCS 2026."
+    },
+    {
+      "date": "2026-11",
+      "slug": "flash-atc-2026",
+      "category": "Paper",
+      "title": "FLASH accepted to SIGOPS ATC 2026",
+      "body": "[FLASH: Fault-Led, Attested, Secure Hybrid-Key Checkpoint for Confidential Inference](publications.html#flash-atc26) has been accepted to the 2026 ACM SIGOPS Annual Technical Conference."
+    },
+    {
       "date": "2026-06",
       "slug": "mc-oram-isca",
       "category": "Paper",
