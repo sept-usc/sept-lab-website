@@ -32,7 +32,13 @@
       "year": 2027,
       "themes": ["verifiable-ai", "tee"],
       "kind": "conference",
+      "url": "papers/argus.html",
+      "pdf": "papers/argus.pdf",
       "links": [
+        {
+          "label": "Artifact",
+          "url": "https://zenodo.org/records/22780367"
+        },
         {
           "label": "BibTeX",
           "url": "https://mengyuanli.com/files/bib/argus-ndss27.bib"
@@ -83,7 +89,13 @@
       "year": 2026,
       "themes": ["tee"],
       "kind": "conference",
+      "url": "papers/flash.html",
+      "pdf": "papers/flash.pdf",
       "links": [
+        {
+          "label": "Artifact",
+          "url": "https://zenodo.org/records/23199897"
+        },
         {
           "label": "BibTeX",
           "url": "https://mengyuanli.com/files/bib/flash-atc26.bib"

@@ -116,7 +116,20 @@ def structured_data(ctx, page_id, title, description, url, project_anchor):
             "description": description, "isPartOf": {"@id": web_id},
             "about": {"@id": org_id}, "inLanguage": "en"}
     graph = [org, website, person, page]
-    if page_id == "home":
+    if page_id in ctx.get("paper_pages", {}):
+        paper = ctx["paper_pages"][page_id]
+        pub = ctx["pubs_by_id"][paper["publication"]]
+        pid = base + "/publications.html#" + pub["id"]
+        graph.append({"@type": "ScholarlyArticle", "@id": pid,
+                      "name": pub["title"], "headline": pub["title"], "url": url,
+                      "author": [{"@type": "Person", "name": name} for name in pub["authors"]],
+                      "abstract": "\n\n".join(paper["abstract"]),
+                      "description": "{} ({})".format(pub["venue"], pub["year"]),
+                      "isAccessibleForFree": True,
+                      "encoding": {"@type": "MediaObject", "encodingFormat": "application/pdf",
+                                   "contentUrl": base + "/papers/" + paper["slug"] + ".pdf"}})
+        page["mainEntity"] = {"@id": pid}
+    elif page_id == "home":
         page["mainEntity"] = {"@id": org_id}
     elif page_id == "people":
         ids = [pi_id]
@@ -156,7 +169,7 @@ def structured_data(ctx, page_id, title, description, url, project_anchor):
             # Data supplies a year, not a full publication date. Keep that precision in
             # the bibliographic description rather than inventing a month or day.
             graph.append({"@type": "ScholarlyArticle", "@id": pid, "name": pub["title"],
-                          "headline": pub["title"], "url": pub.get("url") or pid, "author": authors,
+                          "headline": pub["title"], "url": urljoin(base + "/", pub["url"]) if pub.get("url") else pid, "author": authors,
                           "description": "{} ({})".format(pub["venue"], pub["year"])})
             ids.append(pid)
         page["mainEntity"] = item_list(ids)

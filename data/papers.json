@@ -1,0 +1,157 @@
+{
+  "papers": [
+    {
+      "slug": "flash",
+      "publication": "flash-atc26",
+      "name": "FLASH",
+      "description": "FLASH reduces confidential GPU inference checkpoint stalls with hybrid-key encryption, GPU write-fault tracking, and incremental snapshots. SIGOPS ATC 2026.",
+      "lead": "How can a confidential LLM service save its GPU state without pausing inference for seconds at every checkpoint? FLASH combines encrypted snapshots with GPU write-fault tracking to make recovery practical on a CPU–GPU confidential computing stack.",
+      "sections": [
+        {
+          "id": "problem",
+          "title": "Why checkpointing is difficult",
+          "paragraphs": [
+            "A long-running LLM service accumulates more than model weights. Its key-value (KV) cache holds the context needed to continue generating responses. Saving this state lets a service recover from failures without rebuilding all of that work.",
+            "Confidential computing changes the cost of a snapshot. GPU memory must leave the device encrypted. A conventional checkpoint path then decrypts it inside the CPU confidential VM and encrypts it again for storage. In the paper’s H100 measurements, the confidential transfer path reaches about 7.3 GB/s, versus about 40 GB/s without confidential computing; copying a full 80 GB device takes roughly 11 seconds. Repeating that work while inference is stopped creates a substantial serving interruption."
+          ]
+        },
+        {
+          "id": "design",
+          "title": "How FLASH works",
+          "paragraphs": [
+            "FLASH brings three mechanisms together. It preserves ciphertext that the GPU has already produced, tracks pages that change during a snapshot, and avoids repeatedly copying allocations that remain unchanged."
+          ],
+          "steps": [
+            {
+              "title": "Keep GPU ciphertext",
+              "text": "Store the GPU copy engine’s encrypted output directly. Wrap its session key with the checkpoint key, alongside encrypted CPU state and authenticated metadata."
+            },
+            {
+              "title": "Track writes while serving",
+              "text": "Copy pages while inference continues. Mark copied 2 MB pages read-only; the first subsequent write faults, records the page as dirty, and restores write access."
+            },
+            {
+              "title": "Pause for the final delta",
+              "text": "Briefly stop inference and copy the remaining dirty state. Never-written allocations, such as model weights, are omitted from repeated copies while still being monitored."
+            }
+          ],
+          "caption": "Simplified checkpoint path. Preserving ciphertext removes redundant cryptography during checkpoint creation; recovery still decrypts saved state and transfers it under a new GPU session key.",
+          "items": [
+            "**Hybrid-key snapshots.** GPU memory stays under the GPU’s data-transfer key. CPU state and the wrapped GPU key use a separate checkpoint key. The snapshot retains authentication tags, initialization-vector counters, and an authenticated manifest so that the saved pieces can be validated together.",
+            "**Fault-led dirty tracking.** A modified NVIDIA Unified Virtual Memory (UVM) driver supplies the write tracking that incremental checkpointing needs. The approach does not require changes to LLM kernels or application source, but it does require driver support.",
+            "**Freshness outside the cloud operator’s control.** A trusted remote attestation service keeps checkpoint key and freshness state. This supports rejection of stale snapshots as well as tampered data."
+          ]
+        },
+        {
+          "id": "results",
+          "title": "What the experiments show",
+          "paragraphs": [
+            "The evaluation runs vLLM 0.8.5 on an NVIDIA H100 with 80 GB of memory, paired with an Intel TDX confidential VM. It covers Llama-3.2-1B, Qwen2.5-7B, and Llama-2-13B under short chatbot and longer reasoning workloads. Checkpoint images are stored in DRAM-backed tmpfs; these results do not include remote-storage latency."
+          ],
+          "items": [
+            "**About 1.2 seconds of stop-and-copy time on average.** At a one-minute checkpoint interval, FLASH reduces this pause by up to 9.4× relative to the PhoenixOS-style baseline and 7.8× relative to the GCR-style baseline (§7.2). The paper reimplements those systems’ checkpoint data paths for the confidential-computing setting.",
+            "**Under 19 seconds to restore the evaluated state.** The three models’ roughly 66–67 GB GPU footprints restore in 17.1–18.7 seconds (§7.4). Restore time is separate from the pause incurred when creating a checkpoint.",
+            "**Serving latency remains workload-dependent.** Write faults and page management add overhead. Some short-chatbot settings see worse tail latency than the baselines, even though the final checkpoint pause is much shorter (§7.3)."
+          ]
+        },
+        {
+          "id": "scope",
+          "title": "Security and scope",
+          "paragraphs": [
+            "FLASH protects checkpoint confidentiality, integrity, and freshness against a malicious cloud operator controlling the host, hypervisor, storage, and PCIe path. It trusts the CPU confidential VM, the GPU TEE and its secure transfer mechanism, and the remote attestation service.",
+            "The prototype targets a single GPU. Globally consistent multi-GPU checkpoints, denial-of-service prevention, and hiding access patterns or checkpoint timing and size are outside its scope. The main result is a shorter secure checkpoint pause, rather than a claim that every workload becomes faster."
+          ]
+        },
+        {
+          "id": "resources",
+          "title": "Paper and artifact",
+          "paragraphs": [
+            "The [full paper](papers/flash.pdf) describes the threat model (§3), checkpoint design and dirty-page tracking (§5), and evaluation (§7). The [archived artifact](https://zenodo.org/records/23199897) provides the ATC 2026 evaluation release.",
+            "Related: [ARGUS](papers/argus.html) studies a complementary question—checking LLM execution when the GPU itself is untrusted. See also our work on [trusted execution and confidential computing](research.html#tee)."
+          ]
+        }
+      ],
+      "abstract": [
+        "GPU Confidential Computing (CC) enables secure LLM inference in production, combining a CPU TEE with NVIDIA’s GPU TEE to protect models and user data from a malicious cloud operator. As long-running LLMs are failure-prone, traditional cloud systems rely on backups, and live migration using checkpoint and restore to deal with failures. In particular, during LLM serving, GPUs build up a massive key-value (KV) cache that accelerates the decode process. But when using GPU CC, these recovery methods fail, as the GPU’s memory state, such as the KV cache, can’t be efficiently checkpointed. Checkpointing GPU memory requires encrypting the GPU data and transmitting to the CPU over the PCIe, which the CPU then decrypts using its shared key with the GPU. This encryption and decryption sequence over the PCIe leads to a 5.5× bandwidth penalty. The decrypted data is then re-encrypted with a new set of keys shared by the CPU and a destination server which adds overhead to the already-long checkpoint latency. LLM serving is stalled for the entire duration of checkpointing; a secure full-dump of an 80 GB H100 memory takes roughly 11 s. Alternatively, tracking write operations and selectively checkpointing these written pages is a preferable path as only a small fraction of the KV cache is updated after each decode round. Current GPUs, however, lack the ability to track dirty pages.",
+        "We present FLASH, a checkpoint/recovery (C/R) system for GPU CC that is both secure (providing confidentiality, integrity, and freshness against a malicious operator) and low latency. FLASH eliminates needless decryption of GPU state during checkpoint creation. FLASH preserves the GPU-encrypted HBM data as is without decryption. The CPU then creates a heterogeneous encryption package: (1) the CPU’s own memory state and the key used to encrypt the GPU CC is encrypted into a single bundle using keys shared by the CPU and a destination server that stores the checkpoint. (2) The GPU-encrypted HBM data is preserved as a second bundle within this heterogeneous package. This approach eliminates redundant decrypt-then-reencrypt overheads for GPU CC state. FLASH also presents a novel approach to track dirty pages to enable incremental checkpointing. FLASH enhances the GPU’s unified virtual memory (UVM) driver to downgrade any GPU page that is already checkpointed to a read-only page. It then uses the write fault mechanism to track modified pages at a 2 MB granularity. This approach requires no source code modifications to the LLM code base. Lastly, FLASH classifies never-written allocations, such as model weights, and removes them from repeated checkpoint copies while continuing to track them for correctness. On an H100 with Intel TDX running vLLM, FLASH reduces checkpoint stall latency up to 9.4× over state-of-the-art GPU C/R systems."
+      ]
+    },
+    {
+      "slug": "argus",
+      "publication": "argus-ndss27",
+      "name": "ARGUS",
+      "description": "ARGUS uses a CPU confidential VM to verify LLM execution on an untrusted GPU and issue per-inference receipts. Methods, evaluation, and scope. NDSS 2027.",
+      "lead": "A model response does not, by itself, show which model produced it or whether its computation was carried out faithfully. ARGUS uses a CPU confidential VM to check LLM execution on an untrusted GPU and attach verifiable execution evidence to each response.",
+      "sections": [
+        {
+          "id": "problem",
+          "title": "What needs to be verified",
+          "paragraphs": [
+            "An application may receive a response from a cloud API, rented GPU, or external agent. Before using that response, it may need evidence that the intended model ran on the stated request under an expected runtime and verification policy.",
+            "ARGUS puts the root of trust in a CPU confidential virtual machine (CVM), using AMD SEV-SNP in the prototype. The GPU performs the full LLM forward pass but remains outside the trusted computing base. This avoids requiring a GPU TEE. The CPU verifier checks the computation and signs a receipt binding the model, request, response, measured runtime, and verification policy."
+          ]
+        },
+        {
+          "id": "design",
+          "title": "How ARGUS works",
+          "steps": [
+            {
+              "title": "Compute on the GPU",
+              "text": "The untrusted accelerator runs the model and supplies the intermediate values needed for verification."
+            },
+            {
+              "title": "Check inside the CVM",
+              "text": "An attestable verifier checks matrix products, recomputes nonlinear operations, and validates the chain between layers and the token-selection policy."
+            },
+            {
+              "title": "Release with a receipt",
+              "text": "After verification completes, release the response and a signed receipt binding it to the request, model, runtime, and policy."
+            }
+          ],
+          "caption": "The CPU CVM is trusted; the GPU and shared transfer buffers are not. The prototype verifies the generated suffix before releasing the response, rather than streaming individually verified tokens.",
+          "paragraphs": [
+            "Matrix multiplications are checked with Freivalds-style randomized projections whose secret randomness stays inside the CVM. Fixed-weight projections can be precomputed. Nonlinear operations—including normalization, positional encoding, masking, softmax, residual additions, and activations—are recomputed on the CPU. Cross-layer checks connect these local checks into an execution chain."
+          ],
+          "items": [
+            "**Overlap work across layers.** A pipeline overlaps GPU computation, transfers, copying into trusted memory, and CPU verification.",
+            "**Transfer only what the verifier needs.** Layer inputs and matrix-product outputs form a minimal transfer set; the verifier reconstructs nonlinear intermediates. Packed transfers reduce crossings through shared bounce buffers. Each frame is copied into protected CVM memory before it is checked, preventing a later GPU write from changing the data being verified.",
+            "**Separate generation from verification scheduling.** Prefill verification overlaps decoding. After generation, ARGUS checks the suffix in a batch using the already verified prefix KV cache, reducing token-by-token synchronization."
+          ]
+        },
+        {
+          "id": "results",
+          "title": "What the experiments show",
+          "paragraphs": [
+            "The testbed combines an AMD EPYC 9115 CPU, an AMD SEV-SNP confidential VM, and an NVIDIA RTX PRO 6000 Blackwell GPU with 96 GB of memory. Experiments use FP32, eager attention, batch size one, and a single GPU, across six open-source models in the 1B–8B range. Reported serving timings exclude one-time initialization."
+          ],
+          "items": [
+            "**18–74% end-to-end overhead on balanced workloads.** This is relative to unverified GPU inference under the same configuration, when the prompt-to-generation length ratio is at most two (T/G ≤ 2). Prompt-heavy workloads have higher overhead: 45–114% in the reported evaluation (§V and Appendix B).",
+            "**Every token-changing corruption was detected in the tested arithmetic attacks.** Tests on Qwen3-1.7B cover precision reduction, single-element perturbations, row noise, weight quantization, selectively skipped matrix multiplications, and skipped layers. The honest evaluation reports zero false positives (§VI). This is an experimental result over those attacks and settings, not a guarantee that every possible modification is detectable.",
+            "**Verification is sensitive to floating-point tolerances.** Small deviations can fall within the calibrated tolerance without changing output tokens. The security analysis distinguishes these numerical effects from the exact-arithmetic guarantees of randomized matrix checks."
+          ]
+        },
+        {
+          "id": "scope",
+          "title": "What the evidence means",
+          "paragraphs": [
+            "The receipt concerns faithful execution under the stated model and verification policy. It does not establish that an answer is factually correct, safe, or useful. ARGUS also does not hide model weights, prompts, or intermediate values from the GPU or inference provider.",
+            "The design trusts the CPU hardware and firmware, the CVM guest kernel, and the measured verifier and inference software stack. Denial of service and side channels are outside its scope. Default greedy decoding checks the selected argmax; optional top-k membership checks show that a token belongs to the allowed candidate set, but do not prove a sampling distribution.",
+            "The current prototype covers dense models with eager attention in the evaluated single-GPU, batch-one configuration. Fused attention kernels, mixture-of-experts models, speculative decoding, and multi-GPU serving need additional work. Lower-precision inference requires new numerical calibration."
+          ]
+        },
+        {
+          "id": "resources",
+          "title": "Paper and artifact",
+          "paragraphs": [
+            "The [full paper](papers/argus.pdf) explains the design (§IV), performance evaluation (§V), security evaluation (§VI), and limitations (§VII). The [archived artifact](https://zenodo.org/records/22780367) provides the implementation and reproduction instructions. Functional and performance experiments can run in a normal VM; the CVM and attestation experiments require SEV-SNP support.",
+            "Related: [FLASH](papers/flash.html) reduces checkpoint interruptions when both the CPU and GPU provide confidential computing. ARGUS instead verifies execution on an untrusted GPU. Explore the lab’s broader work on [verifiable AI](research.html#verifiable-ai)."
+          ]
+        }
+      ],
+      "abstract": [
+        "When LLM inference is served across trust boundaries, the receiver has no technical means to verify that a response came from the intended model under a trustworthy runtime. This creates a need for per-inference execution evidence that can be checked before a downstream client consumes the result. Existing approaches do not yet provide such evidence for practical online LLM serving. Cryptographic proof systems remain too slow for online serving; GPU Trusted Execution Environment (TEE)-based systems require specialized hardware unavailable on most deployments; and prior CPU TEE-based systems lack the inference-specific optimizations required for practical evidence generation at serving time.",
+        "We present ARGUS, a system that uses a CPU confidential VM (CVM) as a hardware root of trust to generate per-inference execution evidence for GPU-accelerated LLM serving. The GPU remains an untrusted accelerator and runs the full LLM forward pass, while an attestable verifier inside the CVM checks the execution and signs a receipt binding the response to the model, request, runtime, and verification policy. ARGUS is built around system-level optimizations that reduce CPU-GPU data movement, trust-boundary crossings, and token-level synchronization. Together, these optimizations make it possible to generate evidence at inference time while preserving most of the GPU serving throughput. On six open-source models (1B–8B parameters), ARGUS adds only 18–74% end-to-end overhead on balanced workloads, relative to unverified GPU inference, compared to 45× GPU-prefill latency for a reimplemented Slalom-style synchronous verifier. Across six arithmetic-attack classes, ARGUS detects every token-changing corruption with zero false positives across our honest evaluation."
+      ]
+    }
+  ]
+}

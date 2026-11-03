@@ -33,6 +33,7 @@ import fnmatch
 import hashlib
 import html
 import json
+import posixpath
 import re
 import shutil
 import sys
@@ -40,7 +41,7 @@ from html.parser import HTMLParser
 import xml.parsers.expat
 from xml.etree import ElementTree
 from pathlib import Path, PurePosixPath
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 import site_discovery
 
@@ -117,6 +118,10 @@ KEYS = {
     "audience": {"id", "title", "button", "subject", "body"},
     "include": {"title", "items"},
     "contact": {"intro", "address_title", "address", "address_source", "maps", "links"},
+    "paper_pages": {"papers"},
+    "paper_page": {"slug", "publication", "name", "description", "lead", "abstract", "sections"},
+    "paper_section": {"id", "title", "paragraphs", "items", "steps", "caption"},
+    "paper_step": {"title", "text"},
 }
 # Fields this design used to show and no longer reads, with what takes their place. They are reported
 # with this hint instead of the plain "unknown field".
@@ -1246,12 +1251,12 @@ def icon_href(name):
 
 
 def head(ctx, page_id, title, description):
-    """A page_id outside PAGES (the 404 page) gets no canonical URL and is kept out of search results.
+    """A page_id outside public_page_files (the 404 page) gets no canonical URL and is kept out of search results.
     Every page links the same stylesheet and script; the home page's journey loads its own two files
     only when a reader asks for it (see JOURNEY_LINK)."""
     site = ctx["site"]
     base = (site.get("base_url") or "").rstrip("/")
-    file_name = PAGES.get(page_id)
+    file_name = public_page_files(ctx).get(page_id)
     if page_id == "home":
         full_title = site["home"].get("title") or f"{site['name']} · {title}"
     else:
@@ -1266,6 +1271,16 @@ def head(ctx, page_id, title, description):
         meta.append(f'<link rel="alternate" type="text/markdown" href="{esc(file_name[:-5] + ".md")}">')
         structured = site_discovery.structured_data(ctx, page_id, full_title, description, page_url, project_anchor)
         meta.append('<script type="application/ld+json">' + script_json(structured) + '</script>')
+    paper = ctx.get("paper_pages", {}).get(page_id)
+    if paper:
+        pub = ctx["pubs_by_id"][paper["publication"]]
+        citation = [("citation_title", pub["title"]),
+                    *[("citation_author", name) for name in pub["authors"]],
+                    ("citation_publication_date", str(pub["year"])),
+                    ("citation_conference_title", pub["venue"])]
+        if base:
+            citation.append(("citation_pdf_url", base + "/papers/" + paper["slug"] + ".pdf"))
+        meta.extend(f'<meta name="{name}" content="{esc(value)}">' for name, value in citation)
     og = site.get("og_image") or {}
     # Social platforms ignore relative image URLs, so the image is announced only
     # once base_url is known.
@@ -1294,7 +1309,7 @@ def head(ctx, page_id, title, description):
 <meta name="description" content="{esc(description)}">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#ffffff">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{'article' if paper else 'website'}">
 <meta property="og:site_name" content="{esc(site['name'])}">
 <meta property="og:title" content="{esc(full_title)}">
 <meta property="og:description" content="{esc(description)}">
@@ -1366,7 +1381,8 @@ def header(ctx, page_id):
     title_label = f' aria-label="{esc(site_title(site))}"' if page_id == "home" else ""
     items = []
     for item in site["nav"]:
-        current = ' aria-current="page"' if item["page"] == page_id else ""
+        active = "publications" if page_id in ctx.get("paper_pages", {}) else page_id
+        current = ' aria-current="page"' if item["page"] == active else ""
         items.append(f'    <li><a href="{PAGES[item["page"]]}"{current}>{esc(item["label"])}</a></li>')
     return f"""<body class="page-{esc(page_id)}">
 <a class="skip-link" href="#main">Skip to main content</a>
@@ -1423,7 +1439,7 @@ def sidebar(ctx):
 
 def analytics_id(ctx, page_id):
     """Only configured public content pages offer analytics; previews are checked again in JS."""
-    if page_id not in PAGES or not ctx["site"].get("base_url"):
+    if page_id not in public_page_files(ctx) or not ctx["site"].get("base_url"):
         return ""
     return (ctx["site"].get("analytics") or {}).get("measurement_id") or ""
 
@@ -1597,7 +1613,8 @@ def authors_html(pub, lab):
 
 def paper_link_items(pub):
     url = pub.get("url")
-    items = [("arXiv" if "arxiv.org/abs/" in url else "Paper", url)] if url else []
+    label = "Overview" if url and url.startswith("papers/") and url.endswith(".html") else "Paper"
+    items = [("arXiv" if "arxiv.org/abs/" in url else label, url)] if url else []
     if pub.get("pdf") and pub["pdf"] != url:
         items.append((link_label(pub["pdf"], "PDF"), pub["pdf"]))
     if pub.get("code"):
@@ -2270,9 +2287,11 @@ def check_rendered(pages):
             if ref not in seen:
                 ERRORS.add(f"rendered {name}", f"{attr}={ref!r} refers to a missing id")
         for href in collector.hrefs:
-            m = re.fullmatch(r"([^:/?#]*)#(.+)", href)  # a relative link to an anchor on a generated page
-            target = m and (m.group(1) or name)
-            if target in collected and m.group(2) not in collected[target].ids:
+            parts = urlsplit(href)
+            if parts.scheme or parts.netloc or not parts.fragment:
+                continue
+            target = posixpath.normpath(posixpath.join(posixpath.dirname(name), parts.path)) if parts.path else name
+            if target in collected and parts.fragment not in collected[target].ids:
                 ERRORS.add(f"rendered {name}", f"link {href!r} points to a missing anchor in {target}; "
                            "if it names a paper, check that the paper is published (publications.json 'since')")
 
@@ -2280,6 +2299,101 @@ def check_rendered(pages):
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
+def load_paper_pages(pubs):
+    data = load_json("papers.json", "paper_pages")
+    result = {}
+    for where, paper in objects(field(data, "papers", "list", "papers.json", default=[]),
+                                "paper_page", "papers.json.papers"):
+        slug = field(paper, "slug", "str", where, default="")
+        if not SLUG_RE.fullmatch(slug):
+            ERRORS.add(where, "slug must contain lowercase letters, digits and hyphens")
+            continue
+        pid = "paper-" + slug
+        if pid in result:
+            ERRORS.add(where, f"duplicate paper page {slug!r}")
+        ref = field(paper, "publication", "str", where, default="")
+        if ref not in pubs:
+            ERRORS.add(where, f"unknown published paper {ref!r}")
+        for key in ("name", "description", "lead"):
+            field(paper, key, "str", where)
+        abstract = str_list(paper, "abstract", where)
+        if not abstract:
+            ERRORS.add(where, "abstract must contain the paper's full abstract")
+        source = ROOT / "papers" / (slug + ".pdf")
+        if not source.is_file() or source.is_symlink():
+            ERRORS.add(where, f"missing PDF: papers/{slug}.pdf")
+        seen = {"abstract"}
+        for sw, section in objects(field(paper, "sections", "list", where, default=[]),
+                                   "paper_section", where + ".sections"):
+            sid = field(section, "id", "str", sw, default="")
+            if not SLUG_RE.fullmatch(sid) or sid in seen:
+                ERRORS.add(sw, "section id must be a unique lowercase slug")
+            seen.add(sid)
+            field(section, "title", "str", sw)
+            for key in ("paragraphs", "items"):
+                check_markup_list(str_list(section, key, sw, required=False), sw + "." + key)
+            for tw, step in objects(field(section, "steps", "list", sw, required=False, default=[]),
+                                    "paper_step", sw + ".steps"):
+                field(step, "title", "str", tw)
+                field(step, "text", "str", tw)
+            field(section, "caption", "str", sw, required=False)
+        result[pid] = paper
+    return result
+
+
+def public_page_files(ctx):
+    return {**PAGES, **{pid: "papers/" + paper["slug"] + ".html"
+                       for pid, paper in ctx.get("paper_pages", {}).items()}}
+
+
+def page_paper(ctx, page_id, paper):
+    pub = ctx["pubs_by_id"][paper["publication"]]
+    filename = public_page_files(ctx)[page_id]
+    resources = [(label, url) for label, url in paper_link_items(pub) if url != filename]
+    links = ' <span aria-hidden="true">·</span> '.join(
+        f'<a href="{esc(url)}">{esc(label)}</a>' for label, url in resources)
+    sections = []
+    for section in paper["sections"]:
+        sid = section["id"]
+        content = paragraphs(section.get("paragraphs", []), "papers.json." + sid)
+        if section.get("steps"):
+            steps = "".join(f'<li><h3>{esc(step["title"])}</h3><p>{esc(step["text"])}</p></li>'
+                            for step in section["steps"])
+            content += '<ol class="paper-flow">' + steps + '</ol>'
+        if section.get("items"):
+            content += '<ul class="paper-points">' + ''.join(
+                f'<li>{inline(item, "papers.json." + sid)}</li>' for item in section["items"]) + '</ul>'
+        if section.get("caption"):
+            content += f'<p class="paper-caption">{esc(section["caption"])}</p>'
+        sections.append(f'<section class="paper-section" id="{sid}" aria-labelledby="{sid}-h">'
+                        f'<h2 id="{sid}-h">{esc(section["title"])}</h2>{content}</section>')
+    toc = ' <span aria-hidden="true">·</span> '.join(
+        f'<a href="#{esc(s["id"])}">{esc(s["title"])}</a>' for s in paper["sections"])
+    abstract = ''.join(f'<p>{esc(p)}</p>' for p in paper["abstract"])
+    body = f'''<article class="paper-page">
+<p class="paper-back"><a href="publications.html">Publications</a> / {esc(paper["name"])}</p>
+<header class="paper-header">
+<p class="paper-kicker">{esc(paper["name"])} · {esc(venue_label(pub))}</p>
+<h1 class="entry-title">{esc(pub["title"])}</h1>
+<p class="paper-authors">{authors_html(pub, lab_names(ctx))}</p>
+<p class="paper-venue">{esc(pub["venue"])}. {esc(pub.get("note", ""))}</p>
+<p class="paper-links">{links}</p>
+</header>
+<p class="paper-lead">{esc(paper["lead"])}</p>
+<nav class="paper-toc" aria-label="On this page">{toc} <span aria-hidden="true">·</span> <a href="#abstract">Abstract</a></nav>
+{''.join(sections)}
+<section class="paper-section paper-abstract" id="abstract" aria-labelledby="abstract-h">
+<h2 id="abstract-h">Abstract</h2>{abstract}</section>
+<p class="paper-source">Based on the linked paper. <a href="papers/{esc(paper["slug"])}.pdf">Read the full paper</a> for the design, threat model, and evaluation. Lab members and advisees are shown in bold.</p>
+</article>'''
+    title = pub["title"] if pub["title"].startswith(paper["name"]) else paper["name"] + ": " + pub["title"]
+    text = render_page(ctx, page_id, title, paper["description"], body)
+    # Shared templates and data use site-root-relative paths. Rebase local HTML
+    # attributes once for this nested page, preserving fragments and external URLs.
+    return re.sub(r'(\s(?:href|src))="(?![a-zA-Z][a-zA-Z0-9+.-]*:|#|/)',
+                  lambda m: m.group(1) + '="../', text)
+
 
 def load_all():
     site = load_site()
@@ -2310,6 +2424,7 @@ def load_all():
         "join": load_join(),
         "contact": load_contact(),
     }
+    ctx["paper_pages"] = load_paper_pages(pubs_by_id)
     try:
         ctx["indexnow"] = site_discovery.load_indexnow(ROOT, site)
     except ValueError as exc:
@@ -2403,10 +2518,12 @@ def render_all(ctx):
         "contact": page_contact,
     }
     pages = {PAGES[pid]: fn(ctx) for pid, fn in builders.items()}
+    pages.update({public_page_files(ctx)[pid]: page_paper(ctx, pid, paper)
+                  for pid, paper in ctx.get("paper_pages", {}).items()})
     pages["404.html"] = page_not_found(ctx)  # not in PAGES, so it has no menu entry
     check_rendered(pages)
     ERRORS.raise_if_any()  # inline markup and ids are validated while rendering
-    pages.update(site_discovery.files(ctx, pages, PAGES))
+    pages.update(site_discovery.files(ctx, pages, public_page_files(ctx)))
     return pages
 
 
@@ -2419,6 +2536,10 @@ def is_build_output(path):
         return path.is_file()
     if path.name == "assets":
         return path.is_dir()
+    if path.name == "papers" and path.is_dir():
+        known = {p.stem for p in (ROOT / "papers").glob("*.pdf")}
+        return all(not p.is_symlink() and p.is_file() and p.stem in known
+                   and p.suffix in {".html", ".md", ".pdf"} for p in path.iterdir())
     if (path.name in site_discovery.MACHINE_FILES
             or path.name in {p[:-5] + ".md" for p in PAGES.values()}
             or site_discovery.is_indexnow_key_file(path)):
@@ -2435,7 +2556,7 @@ def write(pages, out):
     because many GitHub Pages repositories have one at their root next to .git, CNAME and sources.
     """
     out = Path(out).expanduser().resolve()
-    if out == ROOT or out in ROOT.parents or any(out == d or d in out.parents for d in (DATA, ASSETS)):
+    if out == ROOT or out in ROOT.parents or any(out == d or d in out.parents for d in (DATA, ASSETS, ROOT / "papers")):
         sys.exit(f"build.py: refusing to write into {out}")
     if out.exists():
         if not out.is_dir():
@@ -2452,7 +2573,12 @@ def write(pages, out):
         shutil.rmtree(out)
     out.mkdir(parents=True)
     for name, text in pages.items():
+        (out / name).parent.mkdir(parents=True, exist_ok=True)
         (out / name).write_text(text, encoding="utf-8")
+    for name in pages:
+        if name.startswith("papers/") and name.endswith(".html"):
+            pdf = Path(name).with_suffix(".pdf")
+            shutil.copyfile(ROOT / pdf, out / pdf)
     shutil.copytree(ASSETS, out / "assets", ignore=shutil.ignore_patterns(*UNPUBLISHED_ASSETS))
     (out / ".nojekyll").write_text("", encoding="utf-8")
     return out

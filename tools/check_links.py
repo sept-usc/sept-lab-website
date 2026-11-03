@@ -64,7 +64,7 @@ def main(argv):
     parser.add_argument("dist", nargs="?", default=str(DEFAULT_DIST),
                         help="directory with the built site (default: dist/ in the project)")
     dist = Path(parser.parse_args(argv).dist).expanduser().resolve()
-    pages = sorted(dist.glob("*.html"))
+    pages = sorted(dist.rglob("*.html"))
     if not pages:
         sys.exit(f"check_links: no HTML files in {dist}; run python3 build.py first")
     parsed = {p.resolve(): parse(p) for p in pages}

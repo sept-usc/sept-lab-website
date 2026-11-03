@@ -12,7 +12,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
-from urllib.parse import unquote, urlsplit
+from urllib.parse import unquote, urljoin, urlsplit
 from xml.etree import ElementTree
 
 
@@ -127,22 +127,24 @@ class DiscoveryIntegrationTests(unittest.TestCase):
         self.assertEqual(data["@context"], "https://schema.org")
         return data["@graph"]
 
-    def test_sitemap_has_the_eight_canonical_html_pages(self):
+    def test_sitemap_has_navigation_and_paper_pages(self):
         filenames = {"index.html", "people.html", "research.html", "publications.html",
                      "teaching.html", "news.html", "join.html", "contact.html"}
         self.assertEqual(set(build.PAGES.values()), filenames)
+        filenames.update({"papers/flash.html", "papers/argus.html"})
         expected = {self.base + ("/" if name == "index.html" else "/" + name)
                     for name in filenames}
         root = ElementTree.fromstring(self.pages["sitemap.xml"])
         ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
         urls = [loc.text for loc in root.findall("s:url/s:loc", ns)]
-        self.assertEqual(len(urls), 8)
+        self.assertEqual(len(urls), len(filenames))
         self.assertEqual(set(urls), expected)
         self.assertFalse(root.findall(".//s:lastmod", ns), "No source modification dates exist")
         for name in filenames:
             expected_url = self.base + ("/" if name == "index.html" else "/" + name)
             self.assertEqual(self.html[name].canonicals, [expected_url])
-            self.assertEqual(self.html[name].markdown_links, [name[:-5] + ".md"])
+            expected_md = ("../" if name.startswith("papers/") else "") + name[:-5] + ".md"
+            self.assertEqual(self.html[name].markdown_links, [expected_md])
             self.graph(name)
         self.assertFalse(self.html["404.html"].canonicals)
         self.assertFalse(self.html["404.html"].structured)
@@ -163,7 +165,7 @@ class DiscoveryIntegrationTests(unittest.TestCase):
             output = root / "site"
             build.write(self.pages, output)
             current = indexnow.snapshot(output, self.ctx["indexnow"])
-            expected = {self.html[name].canonicals[0] for name in build.PAGES.values()}
+            expected = {self.html[name].canonicals[0] for name in build.public_page_files(self.ctx).values()}
             self.assertEqual(set(current), expected)
             state = root / "state.json"
             indexnow.write_state(state, self.ctx["indexnow"]["host"], current)
@@ -265,7 +267,7 @@ class DiscoveryIntegrationTests(unittest.TestCase):
         for article, pub in zip(articles, expected):
             with self.subTest(paper=pub["id"]):
                 self.assertEqual(article["name"], pub["title"])
-                self.assertEqual(article["url"], pub.get("url") or article["@id"])
+                self.assertEqual(article["url"], urljoin(self.base + "/", pub["url"]) if pub.get("url") else article["@id"])
                 authors = [author.get("name") or by_id[author["@id"]]["name"]
                            for author in article["author"]]
                 self.assertEqual(authors, pub["authors"])
@@ -434,6 +436,9 @@ class DiscoveryIntegrationTests(unittest.TestCase):
                         continue
                     count += 1
                     path = unquote(parsed.path).lstrip("/") or "index.html"
+                    if path.endswith(".pdf"):
+                        self.assertTrue((ROOT / path).is_file())
+                        continue
                     self.assertIn(path, self.pages)
                     if parsed.fragment:
                         self.assertIn(path, self.html)

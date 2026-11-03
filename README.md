@@ -42,6 +42,7 @@ Edit the corresponding file under [data/](data/), then rebuild and check links.
 | [people.json](data/people.json) | Principal investigator, current members, alumni, and contact email |
 | [research.json](data/research.json) | Research directions, topics, representative papers, and projects |
 | [publications.json](data/publications.json) | Publication records, paper and artifact links, and scholarly profiles |
+| [papers.json](data/papers.json) | Independent paper overviews, abstracts, methods, results, and scope; bibliographic details come from publications.json |
 | [news.json](data/news.json) | Dated announcements |
 | [teaching.json](data/teaching.json) | Courses, terms, descriptions, and course links |
 | [join.json](data/join.json) | Recruitment information and email subjects |
@@ -63,6 +64,8 @@ The builder reports unknown fields, invalid dates and URLs, duplicate IDs, and u
 
 With `base_url` set, every public page has its own title, description and canonical URL, with matching social-preview metadata. JSON-LD describes the lab, its website, the PI, people, research subjects and the publications that are visible on the site. Person and research-subject identifiers point to their visible page anchors. PI profiles belong to the PI; alumni are not marked as current members. Paper records retain their supplied year without an invented publication day.
 
+Paper overviews live at `papers/<slug>.html`, alongside the original downloadable `papers/<slug>.pdf`. Edit `data/papers.json` and place the supplied PDF in the source `papers/` directory. Keep the full abstract faithful to the paper and qualify performance numbers with their experimental conditions. Link the overview and PDF from the matching publication record; do not duplicate author or venue metadata. Each overview has citation metadata, structured scholarly data, a Markdown copy, and a sitemap entry.
+
 The eight sections are peers in the main navigation; each page is available through ordinary HTML links without JavaScript. Keep these labels clear and summaries specific to each page. Google chooses [sitelinks](https://developers.google.com/search/docs/appearance/sitelinks) automatically for each query; the site cannot require particular links or categories to appear. The Research page introduces [verifiable.pro](https://verifiable.pro/) in its Verifiable AI section as a lab-maintained resource, rather than repeating it in site-wide navigation or identity metadata.
 
 The build also writes:
@@ -70,7 +73,7 @@ The build also writes:
 | File | Purpose |
 | --- | --- |
 | `robots.txt` | Allows crawling and points to the sitemap |
-| `sitemap.xml` | Lists the eight canonical public HTML pages, excluding the 404 page |
+| `sitemap.xml` | Lists canonical public HTML pages, including paper overviews, excluding the 404 page |
 | `index.md`, `people.md`, and other page-matched Markdown files | Main-column content with links, generated from the rendered HTML |
 | `llms.txt` | A short guide to the official pages and their text copies |
 | `llms-full.txt` | The combined text of those pages |
@@ -83,7 +86,7 @@ For Google and Bing, submit `https://septlab.com/sitemap.xml` through the site's
 
 ### Notify search engines after publishing
 
-After a successful deployment, the Pages workflow submits added, changed and removed canonical pages through [IndexNow](https://www.indexnow.org/documentation). The public `indexnow.json` file selects this site's host and ownership key. The builder checks that the host matches `data/site.json` and publishes `<key>.txt` at the site root; the key is a public ownership record, not an account credential. The script checks the live key before sending a submission. It uses the sitemap to select public pages and compares meaningful page content with the last accepted state, cached by the workflow. An unchanged build sends no notification. The first run, or a run after GitHub evicts that cache, initializes the state by submitting the eight public pages.
+After a successful deployment, the Pages workflow submits added, changed and removed canonical pages through [IndexNow](https://www.indexnow.org/documentation). The public `indexnow.json` file selects this site's host and ownership key. The builder checks that the host matches `data/site.json` and publishes `<key>.txt` at the site root; the key is a public ownership record, not an account credential. The script checks the live key before sending a submission. It uses the sitemap to select public pages and compares meaningful page content with the last accepted state, cached by the workflow. An unchanged build sends no notification. The first run, or a run after GitHub evicts that cache, initializes the state by submitting all public pages.
 
 Check the payload locally without sending it:
 

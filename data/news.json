@@ -5,7 +5,7 @@
       "slug": "ndss-2027-papers",
       "category": "Paper",
       "title": "Two papers accepted to NDSS 2027",
-      "body": "[TPUZZ: Cross-Domain State-Aware Fuzzing of Google Pixel TPU](publications.html#tpuzz-ndss27) and [Hardware-Rooted Inference-Time Verification for LLM Execution on Untrusted GPUs (ARGUS)](publications.html#argus-ndss27) have been accepted to NDSS 2027."
+      "body": "[TPUZZ: Cross-Domain State-Aware Fuzzing of Google Pixel TPU](publications.html#tpuzz-ndss27) and [Hardware-Rooted Inference-Time Verification for LLM Execution on Untrusted GPUs (ARGUS)](papers/argus.html) have been accepted to NDSS 2027."
     },
     {
       "date": "2026-11",
@@ -19,7 +19,7 @@
       "slug": "flash-atc-2026",
       "category": "Paper",
       "title": "FLASH accepted to SIGOPS ATC 2026",
-      "body": "[FLASH: Fault-Led, Attested, Secure Hybrid-Key Checkpoint for Confidential Inference](publications.html#flash-atc26) has been accepted to the 2026 ACM SIGOPS Annual Technical Conference."
+      "body": "[FLASH: Fault-Led, Attested, Secure Hybrid-Key Checkpoint for Confidential Inference](papers/flash.html) has been accepted to the 2026 ACM SIGOPS Annual Technical Conference."
     },
     {
       "date": "2026-06",
