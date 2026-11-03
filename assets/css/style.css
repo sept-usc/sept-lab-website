@@ -72,6 +72,10 @@ a:hover { color: var(--accent-hover); }
 .paper-links { font-size: 16px; margin-bottom: 28px; }
 .paper-links span, .paper-toc span { margin: 0 5px; color: var(--muted); }
 .paper-lead { font-size: 20px; line-height: 1.55; color: var(--ink); }
+.paper-figure { margin: 30px 0 34px; }
+.paper-figure picture, .paper-figure img { display: block; width: 100%; height: auto; }
+.paper-figure img { border: 1px solid var(--hair); }
+.paper-figure figcaption { margin-top: 12px; font-size: 14px; line-height: 1.65; color: var(--muted); }
 .paper-toc { border-block: 1px solid var(--rule); padding: 12px 0; margin: 28px 0 34px; font-size: 14px; line-height: 1.9; }
 .paper-section { margin-bottom: 36px; scroll-margin-top: 24px; }
 .paper-section h2 { margin-bottom: 18px; }

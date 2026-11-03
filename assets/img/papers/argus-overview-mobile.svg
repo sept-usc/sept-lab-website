@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450" height="1040" viewBox="0 0 450 1040" role="img" aria-labelledby="title desc">
+<title id="title">ARGUS inference verification pipeline</title><desc id="desc">An untrusted GPU performs LLM inference and exports intermediate values through untrusted shared buffers. ARGUS copies each frame into protected CPU CVM memory, checks arithmetic, cross-layer consistency, and token selection, then releases a response and signed receipt only after verification passes.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#656565"/></marker></defs>
+<rect width="450" height="1040" fill="#fff"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="20" y="32.0" font-size="24" fill="#252525" font-weight="700" text-anchor="start">ARGUS verification pipeline</text>
+<rect x="20" y="66" width="410" height="166" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="40" y="101.0" font-size="23" fill="#252525" font-weight="700" text-anchor="start">Untrusted GPU</text>
+<text x="40" y="139" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Full LLM forward pass</text>
+<text x="40" y="169" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Export intermediate values</text>
+<rect x="281" y="119" width="16" height="14" rx="1" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="305" y="119" width="16" height="14" rx="1" fill="#e8e8e8" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="329" y="119" width="16" height="14" rx="1" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="353" y="119" width="16" height="14" rx="1" fill="#e8e8e8" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="377" y="119" width="16" height="14" rx="1" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="281" y="141" width="16" height="14" rx="1" fill="#e8e8e8" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="305" y="141" width="16" height="14" rx="1" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="329" y="141" width="16" height="14" rx="1" fill="#e8e8e8" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="353" y="141" width="16" height="14" rx="1" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="377" y="141" width="16" height="14" rx="1" fill="#e8e8e8" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="281" y="163" width="16" height="14" rx="1" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="305" y="163" width="16" height="14" rx="1" fill="#e8e8e8" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="329" y="163" width="16" height="14" rx="1" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="353" y="163" width="16" height="14" rx="1" fill="#e8e8e8" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="377" y="163" width="16" height="14" rx="1" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<path d="M225 237L225 269" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="20" y="282" width="410" height="112" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="40" y="317.0" font-size="23" fill="#252525" font-weight="700" text-anchor="start">Untrusted shared buffers</text>
+<text x="40" y="353.0" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Copy once into protected CVM memory</text>
+<path d="M225 399L225 431" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="20" y="444" width="410" height="264" rx="6" fill="#fcf6f5" stroke="#990000" stroke-width="1.5"/>
+<text x="40" y="480.0" font-size="23" fill="#990000" font-weight="700" text-anchor="start">Trusted CPU confidential VM</text>
+<path d="M41 520l5 5 10-12" fill="none" stroke="#990000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="68" y="528.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">Matrix-product checks</text>
+<path d="M41 561l5 5 10-12" fill="none" stroke="#990000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="68" y="569.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">Nonlinear + layer checks</text>
+<path d="M41 602l5 5 10-12" fill="none" stroke="#990000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="68" y="610.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">Token-selection checks</text>
+<path d="M40 633L410 633" fill="none" stroke="#d7d7d7" stroke-width="1.7"/>
+<text x="40" y="674.0" font-size="19" fill="#656565" font-weight="400" text-anchor="start">Secret randomness stays inside</text>
+<path d="M225 713L225 755" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="242" y="739.0" font-size="18" fill="#990000" font-weight="700" text-anchor="start">Checks pass</text>
+<rect x="20" y="768" width="410" height="132" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="40" y="804.0" font-size="23" fill="#906000" font-weight="700" text-anchor="start">Response + signed receipt</text>
+<text x="40" y="840" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Release only after the complete</text>
+<text x="40" y="869" font-size="19" fill="#252525" font-weight="400" text-anchor="start">response has been verified.</text>
+<text x="20" y="942.0" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Receipt: request, response, model,</text>
+<text x="20" y="970.0" font-size="19" fill="#252525" font-weight="400" text-anchor="start">runtime, and verification policy.</text>
+<text x="20" y="1014.0" font-size="18" fill="#990000" font-weight="400" text-anchor="start">Failed checks reject the request.</text>
+</g></svg>

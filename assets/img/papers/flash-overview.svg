@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" role="img" aria-labelledby="title desc">
+<title id="title">FLASH checkpoint pipeline</title><desc id="desc">FLASH preserves GPU copy-engine ciphertext, wraps the GPU session key with the CPU checkpoint state, and stores an authenticated snapshot on untrusted storage. A trusted remote attestation service supplies checkpoint key and freshness state. Concurrent copying and write-fault tracking leave a short stop-and-copy phase.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#656565"/></marker></defs>
+<rect width="900" height="650" fill="#fff"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="28" y="34.0" font-size="25" fill="#252525" font-weight="700" text-anchor="start">FLASH: preserve ciphertext, shorten the pause</text>
+<rect x="326" y="68" width="546" height="74" rx="6" fill="#fcf6f5" stroke="#990000" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="347" y="96.0" font-size="21" fill="#990000" font-weight="700" text-anchor="start">Trusted remote attestation service</text>
+<text x="347" y="124.0" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Checkpoint key + freshness state</text>
+<path d="M463 142L463 171" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)" stroke-dasharray="5 5"/>
+<rect x="28" y="182" width="240" height="240" rx="6" fill="#fcf6f5" stroke="#990000" stroke-width="1.5"/>
+<text x="48" y="218.0" font-size="23" fill="#990000" font-weight="700" text-anchor="start">Trusted GPU TEE</text>
+<text x="48" y="249.0" font-size="21" fill="#252525" font-weight="400" text-anchor="start">LLM + KV cache</text>
+<rect x="48" y="270" width="28" height="36" rx="2" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="84" y="270" width="28" height="36" rx="2" fill="#fcf6f5" stroke="#990000" stroke-width="1.5"/>
+<path d="M90 282L106 282" fill="none" stroke="#990000" stroke-width="1.7"/>
+<rect x="120" y="270" width="28" height="36" rx="2" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<rect x="156" y="270" width="28" height="36" rx="2" fill="#fcf6f5" stroke="#990000" stroke-width="1.5"/>
+<path d="M162 282L178 282" fill="none" stroke="#990000" stroke-width="1.7"/>
+<rect x="192" y="270" width="28" height="36" rx="2" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<text x="48" y="336.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">Write faults track</text>
+<text x="48" y="364.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">dirty 2 MB pages</text>
+<text x="48" y="401.0" font-size="18" fill="#656565" font-weight="400" text-anchor="start">Copy engine encrypts</text>
+<path d="M273 300L317 300" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="326" y="182" width="274" height="240" rx="6" fill="#fcf6f5" stroke="#990000" stroke-width="1.5"/>
+<text x="346" y="218.0" font-size="23" fill="#990000" font-weight="700" text-anchor="start">Trusted CPU CVM</text>
+<text x="346" y="255.0" font-size="21" fill="#252525" font-weight="700" text-anchor="start">GPU ciphertext</text>
+<text x="346" y="284.4" font-size="21" fill="#252525" font-weight="700" text-anchor="start">kept as is</text>
+<path d="M346 301L580 301" fill="none" stroke="#d7d7d7" stroke-width="1.7"/>
+<text x="346" y="330" font-size="19" fill="#252525" font-weight="400" text-anchor="start">CPU state + wrapped</text>
+<text x="346" y="358" font-size="19" fill="#252525" font-weight="400" text-anchor="start">GPU key + authenticated</text>
+<text x="346" y="386" font-size="19" fill="#252525" font-weight="400" text-anchor="start">snapshot metadata</text>
+<path d="M606 300L646 300" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="656" y="182" width="216" height="240" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="677" y="217" font-size="23" fill="#252525" font-weight="700" text-anchor="start">Untrusted</text>
+<text x="677" y="246" font-size="23" fill="#252525" font-weight="700" text-anchor="start">storage</text>
+<rect x="680" y="271" width="168" height="75" rx="6" fill="white" stroke="#d7d7d7" stroke-width="1.5"/>
+<text x="764" y="300" font-size="20" fill="#252525" font-weight="400" text-anchor="middle">Encrypted</text>
+<text x="764" y="327" font-size="20" fill="#252525" font-weight="400" text-anchor="middle">checkpoint</text>
+<text x="677" y="386" font-size="18" fill="#656565" font-weight="400" text-anchor="start">Ciphertext +</text>
+<text x="677" y="410" font-size="18" fill="#656565" font-weight="400" text-anchor="start">protected keys</text>
+<text x="28" y="468.0" font-size="22" fill="#252525" font-weight="700" text-anchor="start">Checkpoint timeline</text>
+<rect x="28" y="489" width="608" height="80" rx="0" fill="#fcf6f5" stroke="#d7d7d7" stroke-width="1.5"/>
+<text x="49" y="519.0" font-size="22" fill="#990000" font-weight="700" text-anchor="start">Inference continues</text>
+<text x="49" y="549.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">Concurrent copy + write-fault tracking</text>
+<rect x="636" y="489" width="236" height="80" rx="0" fill="#fcf6e8" stroke="#d7d7d7" stroke-width="1.5"/>
+<text x="656" y="519.0" font-size="22" fill="#906000" font-weight="700" text-anchor="start">Brief pause</text>
+<text x="656" y="549.0" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Copy final dirty delta</text>
+<text x="28" y="611.0" font-size="19" fill="#656565" font-weight="400" text-anchor="start">Static weights: save once, keep monitoring for later writes.</text>
+</g></svg>

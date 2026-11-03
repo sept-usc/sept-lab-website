@@ -436,10 +436,10 @@ class DiscoveryIntegrationTests(unittest.TestCase):
                         continue
                     count += 1
                     path = unquote(parsed.path).lstrip("/") or "index.html"
-                    if path.endswith(".pdf"):
+                    if path.endswith(".pdf") or path.startswith("assets/"):
                         self.assertTrue((ROOT / path).is_file())
                         continue
-                    self.assertIn(path, self.pages)
+                    self.assertIn(path, list(self.pages))
                     if parsed.fragment:
                         self.assertIn(path, self.html)
                         self.assertIn(unquote(parsed.fragment), self.html[path].ids)

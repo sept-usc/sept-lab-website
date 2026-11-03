@@ -119,7 +119,8 @@ KEYS = {
     "include": {"title", "items"},
     "contact": {"intro", "address_title", "address", "address_source", "maps", "links"},
     "paper_pages": {"papers"},
-    "paper_page": {"slug", "publication", "name", "description", "lead", "abstract", "sections"},
+    "paper_page": {"slug", "publication", "name", "description", "lead", "abstract", "sections", "figure"},
+    "paper_figure": {"image", "mobile_image", "alt", "caption"},
     "paper_section": {"id", "title", "paragraphs", "items", "steps", "caption"},
     "paper_step": {"title", "text"},
 }
@@ -2317,6 +2318,16 @@ def load_paper_pages(pubs):
             ERRORS.add(where, f"unknown published paper {ref!r}")
         for key in ("name", "description", "lead"):
             field(paper, key, "str", where)
+        figure = field(paper, "figure", "dict", where, required=False)
+        if figure:
+            fw = where + ".figure"
+            check_keys(figure, "paper_figure", fw)
+            for key in ("image", "mobile_image"):
+                path = url_field(figure, key, fw)
+                check_local_file(path, fw + "." + key)
+            field(figure, "alt", "str", fw)
+            caption = field(figure, "caption", "str", fw)
+            check_markup(caption, fw + ".caption")
         abstract = str_list(paper, "abstract", where)
         if not abstract:
             ERRORS.add(where, "abstract must contain the paper's full abstract")
@@ -2371,6 +2382,16 @@ def page_paper(ctx, page_id, paper):
     toc = ' <span aria-hidden="true">·</span> '.join(
         f'<a href="#{esc(s["id"])}">{esc(s["title"])}</a>' for s in paper["sections"])
     abstract = ''.join(f'<p>{esc(p)}</p>' for p in paper["abstract"])
+    figure_html = ""
+    figure = paper.get("figure")
+    if figure:
+        figure_html = f'''<figure class="paper-figure" id="overview-figure">
+<picture>
+<source media="(max-width: 600px)" srcset="{esc(figure['mobile_image'])}" width="450" height="1040">
+<img src="{esc(figure['image'])}" width="900" height="650" alt="{esc(figure['alt'])}">
+</picture>
+<figcaption>{inline(figure['caption'], 'papers.json.figure.caption')} <a href="{esc(figure['image'])}">View full-size figure</a>.</figcaption>
+</figure>'''
     body = f'''<article class="paper-page">
 <p class="paper-back"><a href="publications.html">Publications</a> / {esc(paper["name"])}</p>
 <header class="paper-header">
@@ -2381,6 +2402,7 @@ def page_paper(ctx, page_id, paper):
 <p class="paper-links">{links}</p>
 </header>
 <p class="paper-lead">{esc(paper["lead"])}</p>
+{figure_html}
 <nav class="paper-toc" aria-label="On this page">{toc} <span aria-hidden="true">·</span> <a href="#abstract">Abstract</a></nav>
 {''.join(sections)}
 <section class="paper-section paper-abstract" id="abstract" aria-labelledby="abstract-h">
@@ -2391,7 +2413,7 @@ def page_paper(ctx, page_id, paper):
     text = render_page(ctx, page_id, title, paper["description"], body)
     # Shared templates and data use site-root-relative paths. Rebase local HTML
     # attributes once for this nested page, preserving fragments and external URLs.
-    return re.sub(r'(\s(?:href|src))="(?![a-zA-Z][a-zA-Z0-9+.-]*:|#|/)',
+    return re.sub(r'(\s(?:href|src|srcset))="(?![a-zA-Z][a-zA-Z0-9+.-]*:|#|/)',
                   lambda m: m.group(1) + '="../', text)
 
 

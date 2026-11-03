@@ -207,7 +207,7 @@ class MainMarkdown(HTMLParser):
     """Read only the rendered main column, omitting navigation, game and controls."""
 
     VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
-    BLOCK = {"p", "div", "section", "article", "ul", "ol", "details", "summary", "dl", "dt", "dd"}
+    BLOCK = {"p", "div", "section", "article", "ul", "ol", "details", "summary", "dl", "dt", "dd", "figure", "figcaption"}
 
     def __init__(self, url):
         super().__init__(convert_charrefs=True)

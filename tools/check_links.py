@@ -43,6 +43,10 @@ class Collector(HTMLParser):
                 self.ids.add(value)
             elif name in ("href", "src") or (name.startswith("data-") and name.endswith(("-href", "-src"))):
                 self.refs.append((tag, name, value, line))
+            elif name == "srcset":
+                for candidate in value.split(","):
+                    if candidate.strip():
+                        self.refs.append((tag, name, candidate.strip().split()[0], line))
             elif name in ID_REF_ATTRS:
                 self.id_refs.extend((name, ref, line) for ref in value.split())
 
