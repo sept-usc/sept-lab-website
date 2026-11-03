@@ -265,7 +265,7 @@ class DiscoveryIntegrationTests(unittest.TestCase):
         for article, pub in zip(articles, expected):
             with self.subTest(paper=pub["id"]):
                 self.assertEqual(article["name"], pub["title"])
-                self.assertEqual(article["url"], pub["url"])
+                self.assertEqual(article["url"], pub.get("url") or article["@id"])
                 authors = [author.get("name") or by_id[author["@id"]]["name"]
                            for author in article["author"]]
                 self.assertEqual(authors, pub["authors"])

@@ -156,7 +156,7 @@ def structured_data(ctx, page_id, title, description, url, project_anchor):
             # Data supplies a year, not a full publication date. Keep that precision in
             # the bibliographic description rather than inventing a month or day.
             graph.append({"@type": "ScholarlyArticle", "@id": pid, "name": pub["title"],
-                          "headline": pub["title"], "url": pub["url"], "author": authors,
+                          "headline": pub["title"], "url": pub.get("url") or pid, "author": authors,
                           "description": "{} ({})".format(pub["venue"], pub["year"])})
             ids.append(pid)
         page["mainEntity"] = item_list(ids)

@@ -6,6 +6,91 @@
   "since": 2024,
   "publications": [
     {
+      "id": "tpuzz-ndss27",
+      "title": "TPUZZ: Cross-Domain State-Aware Fuzzing of Google Pixel TPU",
+      "authors": ["Minghao Lin", "Haoxuan Xu", "Yuzhou Fang", "Beijie Liu", "Nanzi Yang", "Guanxing Wen", "Mengyuan Li"],
+      "venue": "Network and Distributed System Security Symposium (NDSS 2027)",
+      "venue_short": "NDSS",
+      "year": 2027,
+      "themes": ["attacks"],
+      "kind": "conference",
+      "links": [
+        {
+          "label": "BibTeX",
+          "url": "https://mengyuanli.com/files/bib/tpuzz-ndss27.bib"
+        }
+      ],
+      "note": "To appear."
+    },
+    {
+      "id": "argus-ndss27",
+      "title": "Hardware-Rooted Inference-Time Verification for LLM Execution on Untrusted GPUs",
+      "authors": ["Beijie Liu", "Haoxuan Xu", "Jie Peng", "Minghao Lin", "Chen Gong", "Tianlong Chen", "Mengyuan Li"],
+      "venue": "Network and Distributed System Security Symposium (NDSS 2027)",
+      "venue_short": "NDSS",
+      "year": 2027,
+      "themes": ["verifiable-ai", "tee"],
+      "kind": "conference",
+      "links": [
+        {
+          "label": "BibTeX",
+          "url": "https://mengyuanli.com/files/bib/argus-ndss27.bib"
+        }
+      ],
+      "note": "To appear."
+    },
+    {
+      "id": "fault-oracle-ccs26",
+      "title": "From Fault to Oracle: Breaking Google Pixel TPU Hardware Memory Isolation via Trusted Deserialization Faults",
+      "authors": ["Minghao Lin", "Guanxing Wen", "Haoxuan Xu", "Yuzhou Fang", "Nanzi Yang", "Xiaokuan Zhang", "Yanan Guo", "Zhuo Zhang", "Mengyuan Li"],
+      "venue": "2026 ACM SIGSAC Conference on Computer and Communications Security (CCS 2026)",
+      "venue_short": "ACM CCS",
+      "year": 2026,
+      "themes": ["attacks"],
+      "kind": "conference",
+      "links": [
+        {
+          "label": "BibTeX",
+          "url": "https://mengyuanli.com/files/bib/fault-oracle-ccs26.bib"
+        }
+      ],
+      "note": "To appear."
+    },
+    {
+      "id": "trapped-handler-ccs26",
+      "title": "Trapped Handler: A Practical Performance Degradation Attack on NVIDIA vGPU via Preemption Manipulation",
+      "authors": ["Cheng Gu", "Fatemeh Moradihaghighi", "Daniel Genkin", "Zhuo Li", "Mengyuan Li", "Zhenkai Zhang", "Yanan Guo"],
+      "venue": "2026 ACM SIGSAC Conference on Computer and Communications Security (CCS 2026)",
+      "venue_short": "ACM CCS",
+      "year": 2026,
+      "themes": ["attacks"],
+      "kind": "conference",
+      "links": [
+        {
+          "label": "BibTeX",
+          "url": "https://mengyuanli.com/files/bib/trapped-handler-ccs26.bib"
+        }
+      ],
+      "note": "To appear."
+    },
+    {
+      "id": "flash-atc26",
+      "title": "FLASH: Fault-Led, Attested, Secure Hybrid-Key Checkpoint for Confidential Inference",
+      "authors": ["Jonghyun Lee", "Taewoon Kang", "Yongqin Wang", "Rachit Rajat", "Mengyuan Li", "Gunjae Koo", "Daniel Wong", "Murali Annavaram"],
+      "venue": "2026 ACM SIGOPS Annual Technical Conference (SIGOPS ATC 2026)",
+      "venue_short": "SIGOPS ATC",
+      "year": 2026,
+      "themes": ["tee"],
+      "kind": "conference",
+      "links": [
+        {
+          "label": "BibTeX",
+          "url": "https://mengyuanli.com/files/bib/flash-atc26.bib"
+        }
+      ],
+      "note": "To appear."
+    },
+    {
       "id": "mc-oram-isca26",
       "title": "MC-ORAM: A Mask-Assisted and Counter-Based Non-Deterministic ORAM Inside VM-Based TEEs",
       "authors": ["Yongqin Wang", "Rachit Rajat", "Jonghyun Lee", "Mengyuan Li", "Murali Annavaram"],

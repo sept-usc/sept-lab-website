@@ -639,7 +639,7 @@ def load_publications():
             ERRORS.add(pw, f"kind {kind!r} must be one of {', '.join(PUB_KINDS)}")
         # Theme ids are checked against research.json in load_all(), once both files are read.
         id_list(pub, "themes", pw, None, "theme")
-        url_field(pub, "url", pw)
+        url_field(pub, "url", pw, required=False)
         for key in ("pdf", "code"):
             url_field(pub, key, pw, required=False)
         field(pub, "award", "str", pw, required=False, allow_empty=True)
@@ -1593,8 +1593,8 @@ def authors_html(pub, lab):
 
 
 def paper_link_items(pub):
-    url = pub["url"]
-    items = [("arXiv" if "arxiv.org/abs/" in url else "Paper", url)]
+    url = pub.get("url")
+    items = [("arXiv" if "arxiv.org/abs/" in url else "Paper", url)] if url else []
     if pub.get("pdf") and pub["pdf"] != url:
         items.append((link_label(pub["pdf"], "PDF"), pub["pdf"]))
     if pub.get("code"):

@@ -49,6 +49,8 @@ Edit the corresponding file under [data/](data/), then rebuild and check links.
 
 Keep publication and research IDs stable: they form page anchors and connect records across files. Publication `themes` must match research theme IDs, and representative `papers` must refer to published entries. The optional publication `since` year controls which entries appear on the site. Lab members are bolded in author lists when their names match `people.json` exactly.
 
+For an accepted paper whose public paper URL or DOI is not available yet, omit `url` and add any available citation links in `links`. Its structured-data URL will point to its entry on the publications page.
+
 News dates accept `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`; each item's date and `slug` form its anchor. Use only the date precision the announcement supports.
 
 Paragraph fields such as homepage `about`, research `description`, and news `body` support `[label](url)`, `**bold**`, and `*italic*`. Names, titles, summaries, and topic labels are plain text. Use relative site links such as `publications.html#wave-asplos26`; links beginning with `/` are rejected because the site can be hosted under a repository path. External links may use HTTP, HTTPS, or `mailto:`.
