@@ -2385,12 +2385,18 @@ def page_paper(ctx, page_id, paper):
     figure_html = ""
     figure = paper.get("figure")
     if figure:
+        # Content versions refresh cached diagrams after a visual revision.
+        def figure_url(key):
+            path = figure[key]
+            version = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()[:12]
+            return path + "?v=" + version
+        desktop_image, mobile_image = figure_url("image"), figure_url("mobile_image")
         figure_html = f'''<figure class="paper-figure" id="overview-figure">
 <picture>
-<source media="(max-width: 600px)" srcset="{esc(figure['mobile_image'])}" width="450" height="1040">
-<img src="{esc(figure['image'])}" width="900" height="650" alt="{esc(figure['alt'])}">
+<source media="(max-width: 600px)" srcset="{esc(mobile_image)}" width="450" height="1040">
+<img src="{esc(desktop_image)}" width="900" height="650" alt="{esc(figure['alt'])}">
 </picture>
-<figcaption>{inline(figure['caption'], 'papers.json.figure.caption')} <a href="{esc(figure['image'])}">View full-size figure</a>.</figcaption>
+<figcaption>{inline(figure['caption'], 'papers.json.figure.caption')} <a href="{esc(desktop_image)}">View full-size figure</a>.</figcaption>
 </figure>'''
     body = f'''<article class="paper-page">
 <p class="paper-back"><a href="publications.html">Publications</a> / {esc(paper["name"])}</p>

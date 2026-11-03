@@ -11,6 +11,7 @@ from pathlib import Path
 OUT = Path(__file__).resolve().parents[2] / 'assets/img/papers'
 INK, MUTED, RED, GOLD = '#252525', '#656565', '#990000', '#906000'
 RULE, TINT, WARM, GRAY = '#d7d7d7', '#fcf6f5', '#fcf6e8', '#f6f6f6'
+TRUST_STROKE, TRUST_FILL, DIRTY_FILL = '#000000', '#edf7ee', '#c9e5cc'
 
 
 class Figure:
@@ -36,12 +37,12 @@ class Figure:
         self.parts.append(f'<path d="M{x1} {y1}L{x2} {y2}" fill="none" stroke="{color}" stroke-width="1.7"{end}{dash}/>')
 
     def check(self, x, y):
-        self.parts.append(f'<path d="M{x} {y}l5 5 10-12" fill="none" stroke="{RED}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>')
+        self.parts.append(f'<path d="M{x} {y}l5 5 10-12" fill="none" stroke="{TRUST_STROKE}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>')
 
     def pages(self, x, y, size=24):
         for i in range(5):
-            self.box(x+i*(size+8), y, size, size+8, TINT if i in (1,3) else 'white', RED if i in (1,3) else RULE, r=2)
-            if i in (1,3): self.line(x+i*(size+8)+6,y+12,x+i*(size+8)+size-6,y+12,RED)
+            self.box(x+i*(size+8), y, size, size+8, DIRTY_FILL if i in (1,3) else 'white', TRUST_STROKE, r=2)
+            if i in (1,3): self.line(x+i*(size+8)+6,y+12,x+i*(size+8)+size-6,y+12,TRUST_STROKE)
 
     def matrix(self, x, y):
         for row in range(3):
@@ -60,21 +61,21 @@ def flash(mobile=False):
     f = Figure(450 if mobile else 900, 1040 if mobile else 650, 'FLASH checkpoint pipeline', desc)
     if not mobile:
         f.text(28, 34, 'FLASH: preserve ciphertext, shorten the pause', 25, bold=True)
-        f.box(326, 68, 546, 74, TINT, RED, dashed=True)
-        f.text(347, 96, 'Trusted remote attestation service', 21, RED, True)
+        f.box(326, 68, 546, 74, TRUST_FILL, TRUST_STROKE, dashed=True)
+        f.text(347, 96, 'Trusted remote attestation service', 21, TRUST_STROKE, True)
         f.text(347, 124, 'Checkpoint key + freshness state', 19)
         f.line(463, 142, 463, 171, MUTED, True, True)
-        f.box(28, 182, 240, 240, TINT, RED)
-        f.text(48, 218, 'Trusted GPU TEE', 23, RED, True)
+        f.box(28, 182, 240, 240, TRUST_FILL, TRUST_STROKE)
+        f.text(48, 218, 'Trusted GPU TEE', 23, TRUST_STROKE, True)
         f.text(48, 249, 'LLM + KV cache', 21)
         f.pages(48, 270, 28)
         f.text(48, 336, ['Write faults track', 'dirty 2 MB pages'], 20)
         f.text(48, 401, 'Copy engine encrypts', 18, MUTED)
         f.line(273, 300, 317, 300, MUTED, True)
-        f.box(326, 182, 274, 240, TINT, RED)
-        f.text(346, 218, 'Trusted CPU CVM', 23, RED, True)
+        f.box(326, 182, 274, 240, TRUST_FILL, TRUST_STROKE)
+        f.text(346, 218, 'Trusted CPU CVM', 23, TRUST_STROKE, True)
         f.text(346, 255, ['GPU ciphertext', 'kept as is'], 21, bold=True)
-        f.line(346, 301, 580, 301)
+        f.line(346, 301, 580, 301, TRUST_STROKE)
         f.text(346, 330, ['CPU state + wrapped', 'GPU key + authenticated', 'snapshot metadata'], 19, leading=28)
         f.line(606, 300, 646, 300, MUTED, True)
         f.box(656, 182, 216, 240, GRAY, MUTED, dashed=True)
@@ -92,17 +93,17 @@ def flash(mobile=False):
         f.text(28, 611, 'Static weights: save once, keep monitoring for later writes.', 19, MUTED)
     else:
         f.text(20, 32, 'FLASH checkpoint pipeline', 24, bold=True)
-        f.box(20, 66, 410, 170, TINT, RED)
-        f.text(40, 100, 'Trusted GPU TEE', 23, RED, True)
+        f.box(20, 66, 410, 170, TRUST_FILL, TRUST_STROKE)
+        f.text(40, 100, 'Trusted GPU TEE', 23, TRUST_STROKE, True)
         f.text(40, 132, 'LLM + KV cache', 20)
         f.pages(252, 117, 22)
         f.text(40, 174, ['Write faults track dirty 2 MB pages.', 'The copy engine encrypts GPU state.'], 19, leading=29)
         f.line(225, 241, 225, 273, MUTED, True)
-        f.box(20, 286, 410, 262, TINT, RED)
-        f.text(40, 322, 'Trusted CPU confidential VM', 23, RED, True)
+        f.box(20, 286, 410, 262, TRUST_FILL, TRUST_STROKE)
+        f.text(40, 322, 'Trusted CPU confidential VM', 23, TRUST_STROKE, True)
         f.text(40, 360, 'Keep GPU ciphertext as is', 21, bold=True)
         f.text(40, 395, ['Bundle CPU state, the wrapped GPU', 'key, and authenticated metadata.'], 19, leading=28)
-        f.line(40, 442, 410, 442)
+        f.line(40, 442, 410, 442, TRUST_STROKE)
         f.text(40, 473, ['Checkpoint key + freshness come from', 'a trusted remote attestation service.'], 18, MUTED, leading=27)
         f.line(225, 553, 225, 585, MUTED, True)
         f.box(20, 598, 410, 120, GRAY, MUTED, dashed=True)
@@ -137,15 +138,15 @@ def argus(mobile=False):
         f.text(318, 214, ['Shared', 'buffers'], 22, bold=True, leading=29)
         f.text(318, 285, ['Untrusted', 'transfer path'], 18, MUTED, leading=27)
         f.line(474, 266, 510, 266, MUTED, True)
-        f.box(520, 104, 352, 302, TINT, RED)
-        f.text(540, 143, 'Trusted CPU CVM', 24, RED, True)
+        f.box(520, 104, 352, 302, TRUST_FILL, TRUST_STROKE)
+        f.text(540, 143, 'Trusted CPU CVM', 24, TRUST_STROKE, True)
         f.text(540, 178, ['Copy once into protected memory'], 19)
-        f.line(540, 199, 852, 199)
+        f.line(540, 199, 852, 199, TRUST_STROKE)
         for y, label in [(237, 'Matrix-product checks'), (278, 'Nonlinear + layer checks'), (319, 'Token-selection checks')]:
             f.check(541, y-8); f.text(566, y, label, 20)
         f.text(540, 380, 'Secret randomness stays inside', 18, MUTED)
         f.line(696, 411, 696, 465, MUTED, True)
-        f.text(712, 445, 'Checks pass', 18, RED, True)
+        f.text(712, 445, 'Checks pass', 18, TRUST_STROKE, True)
         f.box(520, 480, 352, 126, WARM, GOLD)
         f.text(540, 516, ['Response + signed receipt'], 22, GOLD, True)
         f.text(540, 551, ['Release after the complete', 'response has been verified.'], 20, leading=29)
@@ -163,14 +164,14 @@ def argus(mobile=False):
         f.text(40, 317, 'Untrusted shared buffers', 23, bold=True)
         f.text(40, 353, 'Copy once into protected CVM memory', 19)
         f.line(225, 399, 225, 431, MUTED, True)
-        f.box(20, 444, 410, 264, TINT, RED)
-        f.text(40, 480, 'Trusted CPU confidential VM', 23, RED, True)
+        f.box(20, 444, 410, 264, TRUST_FILL, TRUST_STROKE)
+        f.text(40, 480, 'Trusted CPU confidential VM', 23, TRUST_STROKE, True)
         for y, label in [(528, 'Matrix-product checks'), (569, 'Nonlinear + layer checks'), (610, 'Token-selection checks')]:
             f.check(41, y-8); f.text(68, y, label, 20)
-        f.line(40, 633, 410, 633)
+        f.line(40, 633, 410, 633, TRUST_STROKE)
         f.text(40, 674, 'Secret randomness stays inside', 19, MUTED)
         f.line(225, 713, 225, 755, MUTED, True)
-        f.text(242, 739, 'Checks pass', 18, RED, True)
+        f.text(242, 739, 'Checks pass', 18, TRUST_STROKE, True)
         f.box(20, 768, 410, 132, WARM, GOLD)
         f.text(40, 804, 'Response + signed receipt', 23, GOLD, True)
         f.text(40, 840, ['Release only after the complete', 'response has been verified.'], 19, leading=29)

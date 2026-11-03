@@ -28,18 +28,18 @@
 <text x="40" y="317.0" font-size="23" fill="#252525" font-weight="700" text-anchor="start">Untrusted shared buffers</text>
 <text x="40" y="353.0" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Copy once into protected CVM memory</text>
 <path d="M225 399L225 431" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
-<rect x="20" y="444" width="410" height="264" rx="6" fill="#fcf6f5" stroke="#990000" stroke-width="1.5"/>
-<text x="40" y="480.0" font-size="23" fill="#990000" font-weight="700" text-anchor="start">Trusted CPU confidential VM</text>
-<path d="M41 520l5 5 10-12" fill="none" stroke="#990000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="20" y="444" width="410" height="264" rx="6" fill="#edf7ee" stroke="#000000" stroke-width="1.5"/>
+<text x="40" y="480.0" font-size="23" fill="#000000" font-weight="700" text-anchor="start">Trusted CPU confidential VM</text>
+<path d="M41 520l5 5 10-12" fill="none" stroke="#000000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <text x="68" y="528.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">Matrix-product checks</text>
-<path d="M41 561l5 5 10-12" fill="none" stroke="#990000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M41 561l5 5 10-12" fill="none" stroke="#000000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <text x="68" y="569.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">Nonlinear + layer checks</text>
-<path d="M41 602l5 5 10-12" fill="none" stroke="#990000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M41 602l5 5 10-12" fill="none" stroke="#000000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <text x="68" y="610.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">Token-selection checks</text>
-<path d="M40 633L410 633" fill="none" stroke="#d7d7d7" stroke-width="1.7"/>
+<path d="M40 633L410 633" fill="none" stroke="#000000" stroke-width="1.7"/>
 <text x="40" y="674.0" font-size="19" fill="#656565" font-weight="400" text-anchor="start">Secret randomness stays inside</text>
 <path d="M225 713L225 755" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
-<text x="242" y="739.0" font-size="18" fill="#990000" font-weight="700" text-anchor="start">Checks pass</text>
+<text x="242" y="739.0" font-size="18" fill="#000000" font-weight="700" text-anchor="start">Checks pass</text>
 <rect x="20" y="768" width="410" height="132" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
 <text x="40" y="804.0" font-size="23" fill="#906000" font-weight="700" text-anchor="start">Response + signed receipt</text>
 <text x="40" y="840" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Release only after the complete</text>
