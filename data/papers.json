@@ -269,7 +269,7 @@
         "id": "flashprove",
         "title": "FlashProve and Hollow-LLM",
         "paragraphs": [
-          "We appreciate FlashProve’s open implementation and clear discussion of its guarantees. Its paper cites our Hollow-LLM work and states: “Nothing in FlashProve prevents the Hollow-LLM attack.” [FlashProve, §9, p. 50](https://raw.githubusercontent.com/anthropics/FlashProve/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/paper/paper.pdf#page=50)",
+          "Amazing work by the FlashProve team on zero-knowledge proofs for LLM inference! We especially appreciate the open implementation and thoughtful discussion of its guarantees and limitations. We’re also glad to see our Hollow-LLM work cited and discussed in their paper: “Nothing in FlashProve prevents the Hollow-LLM attack.” [FlashProve, §9, p. 50](https://raw.githubusercontent.com/anthropics/FlashProve/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/paper/paper.pdf#page=50)",
           "A valid proof binds a result to committed weights, but does not certify how much computation those weights require. A provider who chooses the private weights can commit to a model with a large declared architecture that computes like a smaller one. This does not break ZK soundness or permit a different model to pass verification under an already authenticated commitment. [Limitation 8.7](https://raw.githubusercontent.com/anthropics/FlashProve/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/paper/paper.pdf#page=48)"
         ]
       }
