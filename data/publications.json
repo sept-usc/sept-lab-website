@@ -33,7 +33,6 @@
       "themes": ["verifiable-ai", "tee"],
       "kind": "conference",
       "url": "papers/argus.html",
-      "pdf": "papers/argus.pdf",
       "links": [
         {
           "label": "Artifact",

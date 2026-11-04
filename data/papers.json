@@ -147,9 +147,9 @@
         },
         {
           "id": "resources",
-          "title": "Paper and artifact",
+          "title": "Artifact and related work",
           "paragraphs": [
-            "The [full paper](papers/argus.pdf) explains the design (§IV), performance evaluation (§V), security evaluation (§VI), and limitations (§VII). The [archived artifact](https://zenodo.org/records/22780367) provides the implementation and reproduction instructions. Functional and performance experiments can run in a normal VM; the CVM and attestation experiments require SEV-SNP support.",
+            "The [archived artifact](https://zenodo.org/records/22780367) provides the implementation and reproduction instructions. Functional and performance experiments can run in a normal VM; the CVM and attestation experiments require SEV-SNP support.",
             "Related: [FLASH](papers/flash.html) reduces checkpoint interruptions when both the CPU and GPU provide confidential computing. ARGUS instead verifies execution on an untrusted GPU. Explore the lab’s broader work on [verifiable AI](research.html#verifiable-ai)."
           ]
         }
@@ -162,7 +162,7 @@
         "image": "assets/img/papers/argus-overview.svg",
         "mobile_image": "assets/img/papers/argus-overview-mobile.svg",
         "alt": "ARGUS pipeline: the untrusted GPU exports intermediates through untrusted shared buffers. A trusted CPU CVM copies them into protected memory and checks arithmetic, layer consistency, and token selection. Only passing requests receive a response and signed receipt.",
-        "caption": "Figure 1. ARGUS execution-verification overview, based on [§IV of the paper](papers/argus.pdf). Dashed boxes are outside the trust boundary. The receipt records execution evidence; it does not establish the factual correctness of an answer."
+        "caption": "Figure 1. ARGUS execution-verification overview, based on §IV of the paper. Dashed boxes are outside the trust boundary. The receipt records execution evidence; it does not establish the factual correctness of an answer."
       }
     },
     {

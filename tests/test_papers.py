@@ -39,10 +39,13 @@ class PaperPageTests(unittest.TestCase):
             self.assertEqual(meta['citation_author'], pub['authors'])
             self.assertEqual(meta['citation_publication_date'], [str(pub['year'])])
             self.assertEqual(meta['citation_conference_title'], [pub['venue']])
-            pdf_url = meta['citation_pdf_url'][0]
             page_url = self.ctx['site']['base_url'] + '/' + filename
-            self.assertEqual(urlsplit(pdf_url).path.rsplit('/', 1)[0], urlsplit(page_url).path.rsplit('/', 1)[0])
-            self.assertEqual(pdf_url, page_url.replace('.html', '.pdf'))
+            if pub.get('pdf'):
+                pdf_url = meta['citation_pdf_url'][0]
+                self.assertEqual(urlsplit(pdf_url).path.rsplit('/', 1)[0], urlsplit(page_url).path.rsplit('/', 1)[0])
+                self.assertEqual(pdf_url, page_url.replace('.html', '.pdf'))
+            else:
+                self.assertNotIn('citation_pdf_url', meta)
             self.assertNotIn('noindex', text)
             for paragraph in paper['abstract']:
                 self.assertIn('<p>' + build.esc(paragraph) + '</p>', text)
@@ -59,8 +62,11 @@ class PaperPageTests(unittest.TestCase):
                 path = 'papers/' + name
                 text = pages[path + '.html']
                 self.assertIn(ctx['site']['base_url'] + '/' + path + '.html', text)
-                self.assertEqual((out / (path + '.pdf')).read_bytes(),
-                                 (build.ROOT / (path + '.pdf')).read_bytes())
+                if name == 'argus':
+                    self.assertFalse((out / (path + '.pdf')).exists())
+                else:
+                    self.assertEqual((out / (path + '.pdf')).read_bytes(),
+                                     (build.ROOT / (path + '.pdf')).read_bytes())
                 self.assertIn('href="../assets/css/style.css"', text)
             # Check all local targets with the same parser used by the link checker.
             for page in out.rglob('*.html'):
@@ -75,6 +81,18 @@ class PaperPageTests(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, 'papers'):
                 build.write(pages, out)
             self.assertEqual(note.read_text(), 'keep')
+
+    def test_withdrawn_argus_pdf_is_removed_from_previous_output_and_all_exports(self):
+        for filename, text in self.pages.items():
+            self.assertNotIn('papers/argus.pdf', text, filename)
+        self.assertNotIn('application/pdf', self.pages['papers/argus.html'])
+        with tempfile.TemporaryDirectory() as temporary:
+            out = build.write(self.pages, Path(temporary) / 'site')
+            stale = out / 'papers/argus.pdf'
+            stale.write_bytes(b'%PDF-previously-published-file')
+            build.write(self.pages, out)
+            self.assertFalse(stale.exists())
+            self.assertTrue((out / 'papers/argus.html').is_file())
 
     def test_unknown_publication_and_invalid_slug_are_rejected(self):
         data = {'papers': [copy.deepcopy(next(iter(self.ctx['paper_pages'].values())))]}

@@ -41,7 +41,7 @@ from html.parser import HTMLParser
 import xml.parsers.expat
 from xml.etree import ElementTree
 from pathlib import Path, PurePosixPath
-from urllib.parse import quote, urlsplit
+from urllib.parse import quote, urljoin, urlsplit
 
 import site_discovery
 
@@ -1280,8 +1280,8 @@ def head(ctx, page_id, title, description):
                     *[("citation_author", name) for name in pub["authors"]],
                     ("citation_publication_date", str(pub["year"])),
                     ("citation_conference_title", pub["venue"])]
-        if base:
-            citation.append(("citation_pdf_url", base + "/papers/" + paper["slug"] + ".pdf"))
+        if base and pub.get("pdf"):
+            citation.append(("citation_pdf_url", urljoin(base + "/", pub["pdf"])))
         meta.extend(f'<meta name="{name}" content="{esc(value)}">' for name, value in citation)
     og = (paper.get("hero") if paper else None) or site.get("og_image") or {}
     # Social platforms ignore relative image URLs, so the image is announced only
@@ -2365,9 +2365,13 @@ def load_paper_pages(pubs):
         abstract = str_list(paper, "abstract", where)
         if not abstract:
             ERRORS.add(where, "abstract must contain the paper's full abstract")
-        source = ROOT / "papers" / (slug + ".pdf")
-        if not source.is_file() or source.is_symlink():
-            ERRORS.add(where, f"missing PDF: papers/{slug}.pdf")
+        pdf = (pubs.get(ref) or {}).get("pdf")
+        if isinstance(pdf, str) and not urlsplit(pdf).scheme:
+            if pdf != f"papers/{slug}.pdf":
+                ERRORS.add(where, f"local PDF must use papers/{slug}.pdf")
+            source = ROOT / pdf
+            if not source.is_file() or source.is_symlink():
+                ERRORS.add(where, f"missing PDF: {pdf}")
         seen = {"abstract"}
         for sw, section in objects(field(paper, "sections", "list", where, default=[]),
                                    "paper_section", where + ".sections"):
@@ -2451,6 +2455,10 @@ def page_paper(ctx, page_id, paper):
                      f'<img src="{esc(versioned_paper_asset(hero["image"]))}" '
                      f'width="{hero["width"]}" height="{hero["height"]}" alt="{esc(hero["alt"])}">'
                      f'<figcaption>{inline(hero["caption"], "papers.json.hero.caption")}</figcaption></figure>')
+    source_note = "This overview summarizes the paper’s design, threat model, and evaluation."
+    if pub.get("pdf"):
+        source_note = (f'Based on the linked paper. <a href="{esc(pub["pdf"])}">Read the full paper</a> '
+                       'for the design, threat model, and evaluation.')
     body = f'''<article class="paper-page">
 <p class="paper-back"><a href="publications.html">Publications</a> / {esc(paper["name"])}</p>
 <header class="paper-header">
@@ -2467,7 +2475,7 @@ def page_paper(ctx, page_id, paper):
 {''.join(sections)}
 <section class="paper-section paper-abstract" id="abstract" aria-labelledby="abstract-h">
 <h2 id="abstract-h">Abstract</h2>{abstract}</section>
-<p class="paper-source">Based on the linked paper. <a href="papers/{esc(paper["slug"])}.pdf">Read the full paper</a> for the design, threat model, and evaluation. Lab members and advisees are shown in bold.</p>
+<p class="paper-source">{source_note} Lab members and advisees are shown in bold.</p>
 {discussion_html}
 </article>'''
     title = pub["title"] if pub["title"].startswith(paper["name"]) else paper["name"] + ": " + pub["title"]
@@ -2620,7 +2628,7 @@ def is_build_output(path):
     if path.name == "assets":
         return path.is_dir()
     if path.name == "papers" and path.is_dir():
-        known = {p.stem for p in (ROOT / "papers").glob("*.pdf")}
+        known = {p["slug"] for p in json.loads((DATA / "papers.json").read_text())["papers"]}
         return all(not p.is_symlink() and p.is_file() and p.stem in known
                    and p.suffix in {".html", ".md", ".pdf"} for p in path.iterdir())
     if (path.name in site_discovery.MACHINE_FILES
@@ -2658,10 +2666,15 @@ def write(pages, out):
     for name, text in pages.items():
         (out / name).parent.mkdir(parents=True, exist_ok=True)
         (out / name).write_text(text, encoding="utf-8")
+    # A file on disk alone is not authorization to publish it. Copy only PDFs
+    # explicitly listed in the publication data, alongside their overview pages.
+    published_pdfs = {pub.get("pdf") for pub in
+                      json.loads((DATA / "publications.json").read_text())["publications"]}
     for name in pages:
         if name.startswith("papers/") and name.endswith(".html"):
             pdf = Path(name).with_suffix(".pdf")
-            shutil.copyfile(ROOT / pdf, out / pdf)
+            if pdf.as_posix() in published_pdfs:
+                shutil.copyfile(ROOT / pdf, out / pdf)
     shutil.copytree(ASSETS, out / "assets", ignore=shutil.ignore_patterns(*UNPUBLISHED_ASSETS))
     (out / ".nojekyll").write_text("", encoding="utf-8")
     return out

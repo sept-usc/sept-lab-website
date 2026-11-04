@@ -120,14 +120,16 @@ def structured_data(ctx, page_id, title, description, url, project_anchor):
         paper = ctx["paper_pages"][page_id]
         pub = ctx["pubs_by_id"][paper["publication"]]
         pid = base + "/publications.html#" + pub["id"]
-        graph.append({"@type": "ScholarlyArticle", "@id": pid,
+        article = {"@type": "ScholarlyArticle", "@id": pid,
                       "name": pub["title"], "headline": pub["title"], "url": url,
                       "author": [{"@type": "Person", "name": name} for name in pub["authors"]],
                       "abstract": "\n\n".join(paper["abstract"]),
-                      "description": "{} ({})".format(pub["venue"], pub["year"]),
-                      "isAccessibleForFree": True,
-                      "encoding": {"@type": "MediaObject", "encodingFormat": "application/pdf",
-                                   "contentUrl": base + "/papers/" + paper["slug"] + ".pdf"}})
+                      "description": "{} ({})".format(pub["venue"], pub["year"])}
+        if pub.get("pdf"):
+            article["isAccessibleForFree"] = True
+            article["encoding"] = {"@type": "MediaObject", "encodingFormat": "application/pdf",
+                                   "contentUrl": urljoin(base + "/", pub["pdf"])}
+        graph.append(article)
         page["mainEntity"] = {"@id": pid}
     elif page_id == "home":
         page["mainEntity"] = {"@id": org_id}
