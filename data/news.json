@@ -33,7 +33,7 @@
       "slug": "hollow-llm-sp",
       "category": "Paper",
       "title": "Hollow-LLM Attack appears at IEEE S&P 2026",
-      "body": "[Hollow-LLM Attack: Computationally Trivial Weights in Zero-Knowledge Verification of LLM Inference](publications.html#hollow-llm-sp26), by Chen Gong, Beijie Liu, and Mengyuan Li, appears at the 2026 IEEE Symposium on Security and Privacy."
+      "body": "[Hollow-LLM Attack: Computationally Trivial Weights in Zero-Knowledge Verification of LLM Inference](papers/hollow-llm.html), by Chen Gong, Beijie Liu, and Mengyuan Li, appears at the 2026 IEEE Symposium on Security and Privacy."
     },
     {
       "date": "2026-04-03",

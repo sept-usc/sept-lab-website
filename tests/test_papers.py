@@ -55,7 +55,7 @@ class PaperPageTests(unittest.TestCase):
         pages = build.render_all(ctx)
         with tempfile.TemporaryDirectory() as temporary:
             out = build.write(pages, Path(temporary) / 'site')
-            for name in ('flash', 'argus'):
+            for name in ('flash', 'argus', 'hollow-llm'):
                 path = 'papers/' + name
                 text = pages[path + '.html']
                 self.assertIn(ctx['site']['base_url'] + '/' + path + '.html', text)

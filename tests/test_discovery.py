@@ -131,7 +131,7 @@ class DiscoveryIntegrationTests(unittest.TestCase):
         filenames = {"index.html", "people.html", "research.html", "publications.html",
                      "teaching.html", "news.html", "join.html", "contact.html"}
         self.assertEqual(set(build.PAGES.values()), filenames)
-        filenames.update({"papers/flash.html", "papers/argus.html"})
+        filenames.update({"papers/flash.html", "papers/argus.html", "papers/hollow-llm.html"})
         expected = {self.base + ("/" if name == "index.html" else "/" + name)
                     for name in filenames}
         root = ElementTree.fromstring(self.pages["sitemap.xml"])

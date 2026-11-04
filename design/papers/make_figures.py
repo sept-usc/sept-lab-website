@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Original, editable SVG overviews of FLASH (§5) and ARGUS (§IV).
+"""Original, editable SVG overviews of FLASH (§5), ARGUS (§IV), and Hollow-LLM (§3–5).
 
 Run from any directory: python3 design/papers/make_figures.py
 Only the standard library is needed. Desktop and mobile compositions carry
@@ -181,8 +181,67 @@ def argus(mobile=False):
     f.save('argus-overview'+('-mobile' if mobile else '')+'.svg')
 
 
+def hollow(mobile=False):
+    desc = ('Before commitment, the model owner chooses structured ghost weights for a larger declared architecture. '
+            'Serving executes a small inner model. Proof generation constructs the larger circuit witness for the same output. '
+            'The verifier accepts a valid proof of the committed relation, which does not measure actual serving effort.')
+    f = Figure(450 if mobile else 900, 1040 if mobile else 650, 'Hollow-LLM serving and proving paths', desc)
+    if not mobile:
+        f.text(28, 34, 'Hollow-LLM: a larger declaration, a smaller serving path', 25, bold=True)
+        f.box(28, 70, 844, 112, GRAY, MUTED, dashed=True)
+        f.text(48, 106, 'Choose structured private weights, then commit', 24, bold=True)
+        f.text(48, 143, 'Small inner model + identity layers or replicated coordinates', 22)
+        f.line(208, 187, 208, 247, MUTED, True)
+        f.line(692, 187, 692, 247, MUTED, True)
+        f.text(230, 226, 'SERVE', 17, MUTED, True)
+        f.text(711, 226, 'PROVE', 17, MUTED, True)
+        f.box(28, 262, 360, 142, WARM, GOLD)
+        f.text(48, 298, 'Execute the small inner model', 22, GOLD, True)
+        f.text(48, 334, ['Identity / replica work collapses', 'on the online serving path.'], 20, leading=29)
+        f.box(512, 262, 360, 142, GRAY, MUTED)
+        f.text(532, 298, 'Use the larger declared circuit', 22, bold=True)
+        f.text(532, 334, ['Construct its witness', 'and generate a valid proof.'], 20, leading=29)
+        f.line(208, 409, 208, 448, MUTED, True)
+        f.line(692, 409, 692, 448, MUTED, True)
+        f.box(28, 462, 360, 112, WARM, GOLD)
+        f.text(48, 499, 'Same logits and output y', 23, GOLD, True)
+        f.text(48, 538, 'as the inner model', 21)
+        f.box(512, 462, 360, 112, TRUST_FILL, TRUST_STROKE)
+        f.check(533, 492)
+        f.text(559, 499, 'Verifier accepts', 23, TRUST_STROKE, True)
+        f.text(532, 538, 'Committed relation is satisfied.', 20)
+        f.line(394, 520, 502, 520, MUTED, True)
+        f.text(448, 503, 'same y', 17, MUTED, anchor='middle')
+        f.text(28, 618, 'A valid inference proof does not measure the effort spent serving the response.', 20, MUTED)
+    else:
+        f.text(20, 32, 'Hollow-LLM: serving vs. proving', 24, bold=True)
+        f.box(20, 66, 410, 160, GRAY, MUTED, dashed=True)
+        f.text(40, 102, 'Choose and commit ghost weights', 22, bold=True)
+        f.text(40, 141, ['Small inner model embedded in a', 'larger declared architecture using', 'identity layers or replicated coordinates.'], 18, leading=29)
+        f.line(225, 231, 225, 269, MUTED, True)
+        f.box(20, 282, 410, 132, WARM, GOLD)
+        f.text(40, 318, '1. Serve using the small model', 22, GOLD, True)
+        f.text(40, 354, ['Identity / replica work collapses', 'on the online serving path.'], 19, leading=28)
+        f.line(225, 419, 225, 451, MUTED, True)
+        f.box(20, 464, 410, 102, WARM, GOLD)
+        f.text(40, 500, 'Same logits and output y', 23, GOLD, True)
+        f.text(40, 536, 'as the inner model', 20)
+        f.line(225, 571, 225, 603, MUTED, True)
+        f.box(20, 616, 410, 140, GRAY, MUTED)
+        f.text(40, 652, '2. Prove the committed relation', 22, bold=True)
+        f.text(40, 689, ['Construct a witness for the larger', 'circuit; generate a valid proof for y.'], 19, leading=29)
+        f.line(225, 761, 225, 793, MUTED, True)
+        f.box(20, 806, 410, 130, TRUST_FILL, TRUST_STROKE)
+        f.check(41, 837)
+        f.text(68, 844, 'Verifier accepts', 23, TRUST_STROKE, True)
+        f.text(40, 884, 'Committed relation is satisfied.', 20)
+        f.text(20, 979, ['The proof does not measure the effort', 'spent serving the response.'], 19, MUTED, leading=29)
+    f.save('hollow-llm-overview'+('-mobile' if mobile else '')+'.svg')
+
+
 if __name__ == '__main__':
     for mobile in (False, True):
         flash(mobile)
         argus(mobile)
-    print('Wrote four paper overview SVGs to', OUT)
+        hollow(mobile)
+    print('Wrote six paper overview SVGs to', OUT)

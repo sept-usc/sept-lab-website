@@ -123,8 +123,13 @@
       "year": 2026,
       "kind": "conference",
       "themes": ["attacks", "verifiable-ai"],
-      "url": "https://doi.org/10.1109/SP63933.2026.00258",
-      "pdf": "https://arxiv.org/abs/2607.28884"
+      "url": "papers/hollow-llm.html",
+      "pdf": "papers/hollow-llm.pdf",
+      "links": [
+        {"label": "DOI", "url": "https://doi.org/10.1109/SP63933.2026.00258"},
+        {"label": "arXiv", "url": "https://arxiv.org/abs/2607.28884"},
+        {"label": "BibTeX", "url": "https://mengyuanli.com/files/hollow-llm.bib"}
+      ]
     },
     {
       "id": "scale-hpca26",

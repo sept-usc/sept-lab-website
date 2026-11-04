@@ -1,0 +1,12 @@
+usc-bovard-sunset.jpg
+Subject: Bovard Auditorium, University of Southern California, Los Angeles.
+Photographer: EEJCC. Photographed 21 July 2021.
+Source: https://commons.wikimedia.org/wiki/File:USC_Bovard_Auditorium_at_sunset.jpg
+License: CC0 1.0 Universal — https://creativecommons.org/publicdomain/zero/1.0/
+File: Unchanged 1280 x 960 rendition provided by Wikimedia Commons, retrieved 3 November 2026.
+Rendition: https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/USC_Bovard_Auditorium_at_sunset.jpg/1280px-USC_Bovard_Auditorium_at_sunset.jpg
+The photo is presented as a campus setting, not as evidence of a system result or institutional endorsement.
+
+*-overview.svg and *-overview-mobile.svg
+Original SEPT Lab explanatory diagrams, generated from design/papers/make_figures.py.
+Based on the corresponding papers cited in each visible figure caption.

@@ -119,8 +119,9 @@ KEYS = {
     "include": {"title", "items"},
     "contact": {"intro", "address_title", "address", "address_source", "maps", "links"},
     "paper_pages": {"papers"},
-    "paper_page": {"slug", "publication", "name", "description", "lead", "abstract", "sections", "figure"},
-    "paper_figure": {"image", "mobile_image", "alt", "caption"},
+    "paper_page": {"slug", "publication", "name", "description", "lead", "abstract", "sections", "figure", "hero", "discussion"},
+    "paper_figure": {"image", "mobile_image", "alt", "caption", "section"},
+    "paper_hero": {"image", "alt", "caption", "width", "height"},
     "paper_section": {"id", "title", "paragraphs", "items", "steps", "caption"},
     "paper_step": {"title", "text"},
 }
@@ -1282,7 +1283,7 @@ def head(ctx, page_id, title, description):
         if base:
             citation.append(("citation_pdf_url", base + "/papers/" + paper["slug"] + ".pdf"))
         meta.extend(f'<meta name="{name}" content="{esc(value)}">' for name, value in citation)
-    og = site.get("og_image") or {}
+    og = (paper.get("hero") if paper else None) or site.get("og_image") or {}
     # Social platforms ignore relative image URLs, so the image is announced only
     # once base_url is known.
     if base and og.get("image"):
@@ -2301,6 +2302,22 @@ def check_rendered(pages):
 # Main
 # ---------------------------------------------------------------------------
 
+def validate_paper_section(section, where, seen):
+    check_keys(section, "paper_section", where)
+    sid = field(section, "id", "str", where, default="")
+    if not SLUG_RE.fullmatch(sid) or sid in seen:
+        ERRORS.add(where, "section id must be a unique lowercase slug")
+    seen.add(sid)
+    field(section, "title", "str", where)
+    for key in ("paragraphs", "items"):
+        check_markup_list(str_list(section, key, where, required=False), where + "." + key)
+    for tw, step in objects(field(section, "steps", "list", where, required=False, default=[]),
+                            "paper_step", where + ".steps"):
+        field(step, "title", "str", tw)
+        field(step, "text", "str", tw)
+    field(section, "caption", "str", where, required=False)
+
+
 def load_paper_pages(pubs):
     data = load_json("papers.json", "paper_pages")
     result = {}
@@ -2318,6 +2335,15 @@ def load_paper_pages(pubs):
             ERRORS.add(where, f"unknown published paper {ref!r}")
         for key in ("name", "description", "lead"):
             field(paper, key, "str", where)
+        hero = field(paper, "hero", "dict", where, required=False)
+        if hero:
+            hw = where + ".hero"
+            check_keys(hero, "paper_hero", hw)
+            check_local_file(url_field(hero, "image", hw), hw + ".image")
+            field(hero, "alt", "str", hw)
+            check_markup(field(hero, "caption", "str", hw), hw + ".caption")
+            for key in ("width", "height"):
+                positive_int(hero, key, hw)
         figure = field(paper, "figure", "dict", where, required=False)
         if figure:
             fw = where + ".figure"
@@ -2328,6 +2354,7 @@ def load_paper_pages(pubs):
             field(figure, "alt", "str", fw)
             caption = field(figure, "caption", "str", fw)
             check_markup(caption, fw + ".caption")
+            field(figure, "section", "str", fw, required=False)
         abstract = str_list(paper, "abstract", where)
         if not abstract:
             ERRORS.add(where, "abstract must contain the paper's full abstract")
@@ -2337,18 +2364,12 @@ def load_paper_pages(pubs):
         seen = {"abstract"}
         for sw, section in objects(field(paper, "sections", "list", where, default=[]),
                                    "paper_section", where + ".sections"):
-            sid = field(section, "id", "str", sw, default="")
-            if not SLUG_RE.fullmatch(sid) or sid in seen:
-                ERRORS.add(sw, "section id must be a unique lowercase slug")
-            seen.add(sid)
-            field(section, "title", "str", sw)
-            for key in ("paragraphs", "items"):
-                check_markup_list(str_list(section, key, sw, required=False), sw + "." + key)
-            for tw, step in objects(field(section, "steps", "list", sw, required=False, default=[]),
-                                    "paper_step", sw + ".steps"):
-                field(step, "title", "str", tw)
-                field(step, "text", "str", tw)
-            field(section, "caption", "str", sw, required=False)
+            validate_paper_section(section, sw, seen)
+        if figure and figure.get("section") and figure["section"] not in seen - {"abstract"}:
+            ERRORS.add(where + ".figure.section", "must name a main content section")
+        discussion = field(paper, "discussion", "dict", where, required=False)
+        if discussion:
+            validate_paper_section(discussion, where + ".discussion", seen)
         result[pid] = paper
     return result
 
@@ -2358,39 +2379,39 @@ def public_page_files(ctx):
                        for pid, paper in ctx.get("paper_pages", {}).items()}}
 
 
+def versioned_paper_asset(path):
+    version = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()[:12]
+    return path + "?v=" + version
+
+
+def paper_section_html(section, figure_html=""):
+    sid = section["id"]
+    content = figure_html + paragraphs(section.get("paragraphs", []), "papers.json." + sid)
+    if section.get("steps"):
+        steps = "".join(f'<li><h3>{esc(step["title"])}</h3><p>{esc(step["text"])}</p></li>'
+                        for step in section["steps"])
+        content += '<ol class="paper-flow">' + steps + '</ol>'
+    if section.get("items"):
+        content += '<ul class="paper-points">' + ''.join(
+            f'<li>{inline(item, "papers.json." + sid)}</li>' for item in section["items"]) + '</ul>'
+    if section.get("caption"):
+        content += f'<p class="paper-caption">{esc(section["caption"])}</p>'
+    return (f'<section class="paper-section" id="{sid}" aria-labelledby="{sid}-h">'
+            f'<h2 id="{sid}-h">{esc(section["title"])}</h2>{content}</section>')
+
+
 def page_paper(ctx, page_id, paper):
     pub = ctx["pubs_by_id"][paper["publication"]]
     filename = public_page_files(ctx)[page_id]
     resources = [(label, url) for label, url in paper_link_items(pub) if url != filename]
     links = ' <span aria-hidden="true">·</span> '.join(
         f'<a href="{esc(url)}">{esc(label)}</a>' for label, url in resources)
-    sections = []
-    for section in paper["sections"]:
-        sid = section["id"]
-        content = paragraphs(section.get("paragraphs", []), "papers.json." + sid)
-        if section.get("steps"):
-            steps = "".join(f'<li><h3>{esc(step["title"])}</h3><p>{esc(step["text"])}</p></li>'
-                            for step in section["steps"])
-            content += '<ol class="paper-flow">' + steps + '</ol>'
-        if section.get("items"):
-            content += '<ul class="paper-points">' + ''.join(
-                f'<li>{inline(item, "papers.json." + sid)}</li>' for item in section["items"]) + '</ul>'
-        if section.get("caption"):
-            content += f'<p class="paper-caption">{esc(section["caption"])}</p>'
-        sections.append(f'<section class="paper-section" id="{sid}" aria-labelledby="{sid}-h">'
-                        f'<h2 id="{sid}-h">{esc(section["title"])}</h2>{content}</section>')
-    toc = ' <span aria-hidden="true">·</span> '.join(
-        f'<a href="#{esc(s["id"])}">{esc(s["title"])}</a>' for s in paper["sections"])
-    abstract = ''.join(f'<p>{esc(p)}</p>' for p in paper["abstract"])
     figure_html = ""
     figure = paper.get("figure")
     if figure:
         # Content versions refresh cached diagrams after a visual revision.
-        def figure_url(key):
-            path = figure[key]
-            version = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()[:12]
-            return path + "?v=" + version
-        desktop_image, mobile_image = figure_url("image"), figure_url("mobile_image")
+        desktop_image = versioned_paper_asset(figure["image"])
+        mobile_image = versioned_paper_asset(figure["mobile_image"])
         figure_html = f'''<figure class="paper-figure" id="overview-figure">
 <picture>
 <source media="(max-width: 600px)" srcset="{esc(mobile_image)}" width="450" height="1040">
@@ -2398,6 +2419,26 @@ def page_paper(ctx, page_id, paper):
 </picture>
 <figcaption>{inline(figure['caption'], 'papers.json.figure.caption')} <a href="{esc(desktop_image)}">View full-size figure</a>.</figcaption>
 </figure>'''
+    figure_section = (figure or {}).get("section")
+    sections = [paper_section_html(section, figure_html if section["id"] == figure_section else "")
+                for section in paper["sections"]]
+    top_figure = "" if figure_section else figure_html
+    toc_items = [(s["id"], s["title"]) for s in paper["sections"]] + [("abstract", "Abstract")]
+    discussion_html = ""
+    if paper.get("discussion"):
+        discussion = paper["discussion"]
+        discussion_html = '<div class="paper-discussion">' + paper_section_html(discussion) + '</div>'
+        toc_items.append((discussion["id"], "FlashProve discussion"))
+    toc = ' <span aria-hidden="true">·</span> '.join(
+        f'<a href="#{esc(sid)}">{esc(title)}</a>' for sid, title in toc_items)
+    abstract = ''.join(f'<p>{esc(p)}</p>' for p in paper["abstract"])
+    hero_html = ""
+    if paper.get("hero"):
+        hero = paper["hero"]
+        hero_html = (f'<figure class="paper-campus">'
+                     f'<img src="{esc(versioned_paper_asset(hero["image"]))}" '
+                     f'width="{hero["width"]}" height="{hero["height"]}" alt="{esc(hero["alt"])}">'
+                     f'<figcaption>{inline(hero["caption"], "papers.json.hero.caption")}</figcaption></figure>')
     body = f'''<article class="paper-page">
 <p class="paper-back"><a href="publications.html">Publications</a> / {esc(paper["name"])}</p>
 <header class="paper-header">
@@ -2408,12 +2449,14 @@ def page_paper(ctx, page_id, paper):
 <p class="paper-links">{links}</p>
 </header>
 <p class="paper-lead">{esc(paper["lead"])}</p>
-{figure_html}
-<nav class="paper-toc" aria-label="On this page">{toc} <span aria-hidden="true">·</span> <a href="#abstract">Abstract</a></nav>
+{hero_html}
+{top_figure}
+<nav class="paper-toc" aria-label="On this page">{toc}</nav>
 {''.join(sections)}
 <section class="paper-section paper-abstract" id="abstract" aria-labelledby="abstract-h">
 <h2 id="abstract-h">Abstract</h2>{abstract}</section>
 <p class="paper-source">Based on the linked paper. <a href="papers/{esc(paper["slug"])}.pdf">Read the full paper</a> for the design, threat model, and evaluation. Lab members and advisees are shown in bold.</p>
+{discussion_html}
 </article>'''
     title = pub["title"] if pub["title"].startswith(paper["name"]) else paper["name"] + ": " + pub["title"]
     text = render_page(ctx, page_id, title, paper["description"], body)

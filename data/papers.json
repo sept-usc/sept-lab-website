@@ -164,6 +164,97 @@
         "alt": "ARGUS pipeline: the untrusted GPU exports intermediates through untrusted shared buffers. A trusted CPU CVM copies them into protected memory and checks arithmetic, layer consistency, and token selection. Only passing requests receive a response and signed receipt.",
         "caption": "Figure 1. ARGUS execution-verification overview, based on [§IV of the paper](papers/argus.pdf). Dashed boxes are outside the trust boundary. The receipt records execution evidence; it does not establish the factual correctness of an answer."
       }
+    },
+    {
+      "slug": "hollow-llm",
+      "publication": "hollow-llm-sp26",
+      "name": "Hollow-LLM",
+      "description": "Hollow-LLM shows how structured private weights can preserve a large declared model and valid ZK proofs while serving at small-model cost. IEEE S&P 2026.",
+      "lead": "A large declared architecture can contain much less effective computation than its dimensions suggest. Hollow-LLM shows how a model owner can commit to structured private weights, serve responses using a smaller model, and still produce valid zero-knowledge proofs for the larger declared architecture.",
+      "abstract": [
+        "As large language models (LLMs) grow in scale and are predominantly served from remote platforms, verifying faithful inference execution becomes critical (i.e., ensuring that a provider actually executes the advertised model and computational workload rather than a tampered or downsized variant). Zero-knowledge (ZK) LLM inference offers an appealing approach. It promises public verifiability and delivers per-instance guarantees of equational correctness by proving that an output is consistent with executing a public architecture under committed, private weights. Though, we show that it does not bind the effort expended to produce the output.",
+        "In this paper, we formalize this overlooked effort gap and introduce the Hollow-LLM Attack, in which a dishonest provider retains the declared architecture and parameter count but embeds ghost weights whose algebraic structure collapses effective computation. These witnesses satisfy the verification circuit and yield valid proofs, even though the dishonest model owner, who serves as the prover, performs computation commensurate with a much smaller model than the declared public architecture. This creates a profitable equilibrium in which providers deliver provably correct outputs at small-model cost while overclaiming model size. Accordingly, we characterize concrete families of ghost weights that compose with standard transformer blocks and show that such hollow deployments substantially reduce serving cost with zero quality loss under the same verification circuit. These findings underscore that proof of correct inference is not proof of large-model execution and necessitate additional protections to bind correctness to verifiable computational work."
+      ],
+      "sections": [
+        {
+          "id": "problem",
+          "title": "What a proof of inference establishes",
+          "paragraphs": [
+            "A typical zero-knowledge LLM service publishes its model architecture and a commitment to private weights. For a request and response, a proof establishes that the response is consistent with the declared circuit and those committed weights. The weights remain hidden, while anyone can check the proof.",
+            "Hollow-LLM identifies a gap between that mathematical statement and the computational effort a customer may associate with a large model. The owner can choose weights whose algebraic structure embeds a smaller model inside a larger declared architecture. The resulting proof is valid: the outer model really does produce the same response. Its apparent size, however, does not establish how much work was needed to obtain that response ([§3](papers/hollow-llm.pdf))."
+          ]
+        },
+        {
+          "id": "design",
+          "title": "How a model becomes hollow",
+          "paragraphs": [
+            "The construction starts with an ordinary inner model. Before making a commitment, the provider creates an expanded outer model with carefully structured “ghost weights.” Online serving executes the inner model. When a transcript is audited, the provider constructs a witness for the larger outer circuit and generates a proof using the existing verification procedure. The commitment remains unchanged throughout."
+          ],
+          "items": [
+            "**Expand depth with identity blocks.** Additional transformer blocks have attention and feed-forward branches that contribute zero. Their residual paths therefore implement x → x, preserving the active inner model’s result. The extra layers exist in the declared architecture without adding useful computation to the serving path (§4.2).",
+            "**Expand width with replicated coordinates.** Hidden states and compatible weight structures are replicated across coordinate blocks. Normalization, attention, and the decoder must be arranged so that the wider model preserves the inner model’s logits. This requires controlled replication and output selection or rescaling; simply making a model wider would change its behavior (§4.3).",
+            "**Preserve the proof contract.** The verifier, circuit, statement format, and public parameters remain fixed for the declared architecture. The construction supplies a valid witness rather than forging a proof or changing committed weights after serving (§3.2)."
+          ]
+        },
+        {
+          "id": "results",
+          "title": "What the experiments show",
+          "paragraphs": [
+            "The evaluation uses the zkGPT proving procedure with a compact, six-layer Transformer of hidden dimension 512. Experiments use 64-token prompts and greedy decoding on an Intel Core Ultra 7 265F workstation running Ubuntu 24.04. Depth and width expansions are evaluated separately and together, including serving, proof generation, and verification ([§5 and Table 2](papers/hollow-llm.pdf))."
+          ],
+          "items": [
+            "**A larger declaration at the same serving cost.** Combining both expansions declares 12 layers and hidden dimension 1024, while prefill and decode time remain at 1× the inner-model baseline. An honestly executed larger reference with that shape takes 2.4× the baseline prefill time and 3.1× the decode time.",
+            "**Proving still pays for the larger circuit.** The combined construction requires 4.81× baseline prover time, close to the larger reference’s 4.74×. Its proof size is 88.3 KB versus 45.6 KB for the inner baseline. These results demonstrate a serving/proving asymmetry, not universally cheaper proofs.",
+            "**Behavior is preserved relative to the inner model.** Outputs and measured perplexity remain unchanged under the evaluated expansions. This does not claim that a small model acquires the quality of an independently trained larger model."
+          ]
+        },
+        {
+          "id": "scope",
+          "title": "Threat model and boundaries",
+          "paragraphs": [
+            "The attacker is a model owner who can choose the private weights before committing to them. Hollow-LLM does not provide a way to substitute a different model under an already fixed commitment to independently authenticated genuine weights. Public-weight and reference-bound deployments are outside the paper’s threat model. Even with authenticated weights, an ordinary inference proof is not a measurement of actual FLOPs or energy expenditure (§3.1).",
+            "The constructions respect the verifier’s numerical semantics. They are analyzed for pre-normalization transformer blocks; positional encodings also matter. Learned positional tables and appropriately replicated rotary encodings support the described variants. A fixed, dimension-dependent sinusoidal encoding can block the width-replication construction, while leaving the depth construction available (§4.4).",
+            "The paper establishes a boundary of commitment-relative inference guarantees, rather than a failure of zero-knowledge soundness. Its experiments demonstrate the construction on a compact model; they do not establish deployment-wide economic gains or that arbitrary size overclaims evade behavioral scrutiny. Serving cost, proof cost, audit frequency, and model provenance must be considered separately (§6)."
+          ]
+        },
+        {
+          "id": "resources",
+          "title": "Paper and related work",
+          "paragraphs": [
+            "Read the [full paper](papers/hollow-llm.pdf), the [IEEE publication](https://doi.org/10.1109/SP63933.2026.00258), or the [arXiv version](https://arxiv.org/abs/2607.28884).",
+            "Related: [ARGUS](papers/argus.html) uses a CPU confidential VM to check LLM execution on an untrusted GPU. Explore the lab’s broader research on [verifiable AI](research.html#verifiable-ai)."
+          ]
+        }
+      ],
+      "figure": {
+        "image": "assets/img/papers/hollow-llm-overview.svg",
+        "mobile_image": "assets/img/papers/hollow-llm-overview-mobile.svg",
+        "section": "design",
+        "alt": "Hollow-LLM uses structured weights chosen before commitment. A small inner model serves responses while the provider constructs a witness and proof for the larger declared circuit. The verifier accepts a valid proof for the same output, without measuring actual serving effort.",
+        "caption": "Figure 1. Hollow-LLM separates the inexpensive serving path from proving the larger committed circuit. This schematic summarizes [§§3–5 of the paper](papers/hollow-llm.pdf); it does not imply cheaper proof generation."
+      },
+      "hero": {
+        "image": "assets/img/papers/usc-bovard-sunset.jpg",
+        "width": 1280,
+        "height": 960,
+        "alt": "USC Bovard Auditorium in warm evening light, with its red-brick tower against a blue sky.",
+        "caption": "Bovard Auditorium, University of Southern California. Photo: [EEJCC / Wikimedia Commons](https://commons.wikimedia.org/wiki/File:USC_Bovard_Auditorium_at_sunset.jpg), [CC0](https://creativecommons.org/publicdomain/zero/1.0/)."
+      },
+      "discussion": {
+        "id": "flashprove",
+        "title": "FlashProve and the limits of committed-model proofs",
+        "paragraphs": [
+          "We appreciate FlashProve’s open implementation and explicit discussion of its guarantees and limitations. Its paper directly cites Hollow-LLM: “Nothing in FlashProve prevents the Hollow-LLM attack.” The surrounding discussion explains that weights with the declared dimensions can yield valid proofs while computing only as much as a substantially smaller model. [FlashProve, §9, p. 50](https://raw.githubusercontent.com/anthropics/FlashProve/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/paper/paper.pdf#page=50)",
+          "The relevant threat model is a malicious model owner choosing and publishing a commitment to private weights. A commitment binds verification to those weights; it does not independently establish their provenance or effective computational capacity. FlashProve documents this as “Unattributed commitment” and warns that providers can choose small or degenerate models. The authors report that an admissible scale configuration can disable every attention and feed-forward block. [Known limits](https://github.com/anthropics/FlashProve/blob/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/guide/known-limits.md#L29-L35)",
+          "This does not show that a service can replace a genuine model while retaining its previously authenticated commitment, or that zero-knowledge soundness is broken. The verifier recomputes the commitment ID and rejects a mismatch with the client’s supplied ID. Establishing which model an ID represents still requires trusted attribution outside the inference proof. [ID meaning](https://github.com/anthropics/FlashProve/blob/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/blocks/frame/heads.h#L78-L105) · [Verifier check](https://github.com/anthropics/FlashProve/blob/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/verifier/src/cp_verify.cpp#L2237-L2254)"
+        ],
+        "items": [
+          "**Output policy and model identity are separate.** Exact match constrains the response to the committed integer model’s greedy output. Clipped gap instead accepts outputs satisfying configured token-cost limits. Tightening that policy does not authenticate provider-chosen weights as a particular external model or certify their computational effort. [Exact-match guarantee](https://raw.githubusercontent.com/anthropics/FlashProve/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/paper/paper.pdf#page=25) · [Clipped-gap limits](https://github.com/anthropics/FlashProve/blob/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/guide/known-limits.md#L37-L49)",
+          "**Implementation constraints matter.** The default weight converter rejects an entirely zero non-embedding tensor. Residual-block equations suggest avenues for identity layers through cancellation, but that observation does not demonstrate a working FlashProve model conversion or accepted proof. We have not validated such a construction through the complete commitment, proving, and verification pipeline. [Conversion check](https://github.com/anthropics/FlashProve/blob/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/weight_sums/weight_sums.cpp#L1023-L1031) · [Model equations](https://github.com/anthropics/FlashProve/blob/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/docs/model.md#L184-L264)",
+          "**Inference savings do not establish proving savings.** FlashProve’s proof of work is a hash-nonce search, not a certificate of model FLOPs. Its intended serving workflow proves an integer-model prefill after response generation. Any claimed economic advantage needs separate measurements of inference, witness construction, proof generation, and proof of work. [PoW implementation](https://github.com/anthropics/FlashProve/blob/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/blocks/chain/chain.h#L182-L199) · [Intended workflow](https://github.com/anthropics/FlashProve/blob/9e2bdd8ff5bf9c62f18263d7dac189b0400b260c/guide/how-it-works.md#L76-L85)"
+        ],
+        "caption": "Source-level review of FlashProve commit 9e2bdd8ff5bf9c62f18263d7dac189b0400b260c, 3 November 2026. This is an analysis of documented guarantees, not an end-to-end exploit report or a measurement of cost savings."
+      }
     }
   ]
 }

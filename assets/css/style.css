@@ -76,6 +76,13 @@ a:hover { color: var(--accent-hover); }
 .paper-figure picture, .paper-figure img { display: block; width: 100%; height: auto; }
 .paper-figure img { border: 1px solid var(--hair); }
 .paper-figure figcaption { margin-top: 12px; font-size: 14px; line-height: 1.65; color: var(--muted); }
+.paper-campus { margin: 30px 0; }
+.paper-campus img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; object-position: 50% 20%; }
+.paper-campus figcaption { margin-top: 10px; font-size: 13px; line-height: 1.6; color: var(--muted); }
+.paper-discussion { margin-top: 40px; padding-top: 30px; border-top: 2px solid var(--rule); }
+@media (max-width: 600px) {
+  .paper-campus img { aspect-ratio: 4 / 3; }
+}
 .paper-toc { border-block: 1px solid var(--rule); padding: 12px 0; margin: 28px 0 34px; font-size: 14px; line-height: 1.9; }
 .paper-section { margin-bottom: 36px; scroll-margin-top: 24px; }
 .paper-section h2 { margin-bottom: 18px; }

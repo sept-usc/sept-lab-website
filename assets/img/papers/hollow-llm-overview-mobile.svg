@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450" height="1040" viewBox="0 0 450 1040" role="img" aria-labelledby="title desc">
+<title id="title">Hollow-LLM serving and proving paths</title><desc id="desc">Before commitment, the model owner chooses structured ghost weights for a larger declared architecture. Serving executes a small inner model. Proof generation constructs the larger circuit witness for the same output. The verifier accepts a valid proof of the committed relation, which does not measure actual serving effort.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#656565"/></marker></defs>
+<rect width="450" height="1040" fill="#fff"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="20" y="32.0" font-size="24" fill="#252525" font-weight="700" text-anchor="start">Hollow-LLM: serving vs. proving</text>
+<rect x="20" y="66" width="410" height="160" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="40" y="102.0" font-size="22" fill="#252525" font-weight="700" text-anchor="start">Choose and commit ghost weights</text>
+<text x="40" y="141" font-size="18" fill="#252525" font-weight="400" text-anchor="start">Small inner model embedded in a</text>
+<text x="40" y="170" font-size="18" fill="#252525" font-weight="400" text-anchor="start">larger declared architecture using</text>
+<text x="40" y="199" font-size="18" fill="#252525" font-weight="400" text-anchor="start">identity layers or replicated coordinates.</text>
+<path d="M225 231L225 269" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="20" y="282" width="410" height="132" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="40" y="318.0" font-size="22" fill="#906000" font-weight="700" text-anchor="start">1. Serve using the small model</text>
+<text x="40" y="354" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Identity / replica work collapses</text>
+<text x="40" y="382" font-size="19" fill="#252525" font-weight="400" text-anchor="start">on the online serving path.</text>
+<path d="M225 419L225 451" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="20" y="464" width="410" height="102" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="40" y="500.0" font-size="23" fill="#906000" font-weight="700" text-anchor="start">Same logits and output y</text>
+<text x="40" y="536.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">as the inner model</text>
+<path d="M225 571L225 603" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="20" y="616" width="410" height="140" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5"/>
+<text x="40" y="652.0" font-size="22" fill="#252525" font-weight="700" text-anchor="start">2. Prove the committed relation</text>
+<text x="40" y="689" font-size="19" fill="#252525" font-weight="400" text-anchor="start">Construct a witness for the larger</text>
+<text x="40" y="718" font-size="19" fill="#252525" font-weight="400" text-anchor="start">circuit; generate a valid proof for y.</text>
+<path d="M225 761L225 793" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="20" y="806" width="410" height="130" rx="6" fill="#edf7ee" stroke="#000000" stroke-width="1.5"/>
+<path d="M41 837l5 5 10-12" fill="none" stroke="#000000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="68" y="844.0" font-size="23" fill="#000000" font-weight="700" text-anchor="start">Verifier accepts</text>
+<text x="40" y="884.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">Committed relation is satisfied.</text>
+<text x="20" y="979" font-size="19" fill="#656565" font-weight="400" text-anchor="start">The proof does not measure the effort</text>
+<text x="20" y="1008" font-size="19" fill="#656565" font-weight="400" text-anchor="start">spent serving the response.</text>
+</g></svg>
