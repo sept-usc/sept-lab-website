@@ -120,9 +120,9 @@ KEYS = {
     "contact": {"intro", "address_title", "address", "address_source", "maps", "links"},
     "paper_pages": {"papers"},
     "paper_page": {"slug", "publication", "name", "description", "lead", "abstract", "sections", "figure", "hero", "discussion"},
-    "paper_figure": {"image", "mobile_image", "alt", "caption", "section"},
+    "paper_figure": {"id", "image", "mobile_image", "alt", "caption", "section"},
     "paper_hero": {"image", "alt", "caption", "width", "height"},
-    "paper_section": {"id", "title", "paragraphs", "items", "steps", "caption"},
+    "paper_section": {"id", "title", "paragraphs", "items", "steps", "caption", "figures"},
     "paper_step": {"title", "text"},
 }
 # Fields this design used to show and no longer reads, with what takes their place. They are reported
@@ -2302,6 +2302,18 @@ def check_rendered(pages):
 # Main
 # ---------------------------------------------------------------------------
 
+def validate_paper_figure(figure, where):
+    check_keys(figure, "paper_figure", where)
+    for key in ("image", "mobile_image"):
+        check_local_file(url_field(figure, key, where), where + "." + key)
+    field(figure, "alt", "str", where)
+    check_markup(field(figure, "caption", "str", where), where + ".caption")
+    field(figure, "section", "str", where, required=False)
+    fid = field(figure, "id", "str", where, required=False)
+    if fid and not SLUG_RE.fullmatch(fid):
+        ERRORS.add(where + ".id", "must be a lowercase slug")
+
+
 def validate_paper_section(section, where, seen):
     check_keys(section, "paper_section", where)
     sid = field(section, "id", "str", where, default="")
@@ -2316,6 +2328,9 @@ def validate_paper_section(section, where, seen):
         field(step, "title", "str", tw)
         field(step, "text", "str", tw)
     field(section, "caption", "str", where, required=False)
+    for fw, figure in objects(field(section, "figures", "list", where, required=False, default=[]),
+                              "paper_figure", where + ".figures"):
+        validate_paper_figure(figure, fw)
 
 
 def load_paper_pages(pubs):
@@ -2346,15 +2361,7 @@ def load_paper_pages(pubs):
                 positive_int(hero, key, hw)
         figure = field(paper, "figure", "dict", where, required=False)
         if figure:
-            fw = where + ".figure"
-            check_keys(figure, "paper_figure", fw)
-            for key in ("image", "mobile_image"):
-                path = url_field(figure, key, fw)
-                check_local_file(path, fw + "." + key)
-            field(figure, "alt", "str", fw)
-            caption = field(figure, "caption", "str", fw)
-            check_markup(caption, fw + ".caption")
-            field(figure, "section", "str", fw, required=False)
+            validate_paper_figure(figure, where + ".figure")
         abstract = str_list(paper, "abstract", where)
         if not abstract:
             ERRORS.add(where, "abstract must contain the paper's full abstract")
@@ -2384,9 +2391,23 @@ def versioned_paper_asset(path):
     return path + "?v=" + version
 
 
+def paper_figure_html(figure, default_id="overview-figure"):
+    desktop_image = versioned_paper_asset(figure["image"])
+    mobile_image = versioned_paper_asset(figure["mobile_image"])
+    return f'''<figure class="paper-figure" id="{esc(figure.get('id') or default_id)}">
+<picture>
+<source media="(max-width: 600px)" srcset="{esc(mobile_image)}" width="450" height="1040">
+<img src="{esc(desktop_image)}" width="900" height="650" alt="{esc(figure['alt'])}">
+</picture>
+<figcaption>{inline(figure['caption'], 'papers.json.figure.caption')} <a href="{esc(desktop_image)}">View full-size figure</a>.</figcaption>
+</figure>'''
+
+
 def paper_section_html(section, figure_html=""):
     sid = section["id"]
     content = figure_html + paragraphs(section.get("paragraphs", []), "papers.json." + sid)
+    for index, figure in enumerate(section.get("figures", []), 1):
+        content += paper_figure_html(figure, f"{sid}-figure-{index}")
     if section.get("steps"):
         steps = "".join(f'<li><h3>{esc(step["title"])}</h3><p>{esc(step["text"])}</p></li>'
                         for step in section["steps"])
@@ -2409,16 +2430,7 @@ def page_paper(ctx, page_id, paper):
     figure_html = ""
     figure = paper.get("figure")
     if figure:
-        # Content versions refresh cached diagrams after a visual revision.
-        desktop_image = versioned_paper_asset(figure["image"])
-        mobile_image = versioned_paper_asset(figure["mobile_image"])
-        figure_html = f'''<figure class="paper-figure" id="overview-figure">
-<picture>
-<source media="(max-width: 600px)" srcset="{esc(mobile_image)}" width="450" height="1040">
-<img src="{esc(desktop_image)}" width="900" height="650" alt="{esc(figure['alt'])}">
-</picture>
-<figcaption>{inline(figure['caption'], 'papers.json.figure.caption')} <a href="{esc(desktop_image)}">View full-size figure</a>.</figcaption>
-</figure>'''
+        figure_html = paper_figure_html(figure)
     figure_section = (figure or {}).get("section")
     sections = [paper_section_html(section, figure_html if section["id"] == figure_section else "")
                 for section in paper["sections"]]

@@ -10,3 +10,9 @@ The photo is presented as a campus setting, not as evidence of a system result o
 *-overview.svg and *-overview-mobile.svg
 Original SEPT Lab explanatory diagrams, generated from design/papers/make_figures.py.
 Based on the corresponding papers cited in each visible figure caption.
+
+hollow-llm-mechanisms.svg and hollow-llm-mechanisms-mobile.svg
+Original schematics based on Hollow-LLM §§4.2–4.3; source: design/papers/make_hollow_mechanisms.py.
+
+hollow-llm-results.svg and hollow-llm-results-mobile.svg
+Original charts of the reported normalized timings in Hollow-LLM Table 2; source: design/papers/plot_hollow_results.py.

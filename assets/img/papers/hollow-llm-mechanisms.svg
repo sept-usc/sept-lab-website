@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" role="img" aria-labelledby="title desc">
+<title id="title">Hollow-LLM depth and width constructions</title><desc id="desc">Depth hollowing appends residual blocks whose attention and FFN outputs are zero, so x plus zero plus zero equals x. Width hollowing repeats compatible hidden states. With two copies and an untied decoder D prime equal to [D/2,D/2], the expanded state [h,h] produces the same logits Dh. Coordinated parameters and arithmetic are required.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#656565"/></marker></defs>
+<rect width="900" height="650" fill="#fff"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="28" y="34.0" font-size="25" fill="#252525" font-weight="700" text-anchor="start">Two ways to add ghost weights</text>
+<text x="28" y="84.0" font-size="23" fill="#252525" font-weight="700" text-anchor="start">A. Depth: added blocks are exact identities</text>
+<rect x="28" y="175" width="72" height="70" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="64" y="220.0" font-size="29" fill="#906000" font-weight="700" text-anchor="middle">x</text>
+<rect x="402" y="175" width="72" height="70" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="438" y="220.0" font-size="29" fill="#906000" font-weight="700" text-anchor="middle">x</text>
+<rect x="804" y="175" width="68" height="70" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="838" y="220.0" font-size="29" fill="#906000" font-weight="700" text-anchor="middle">x</text>
+<rect x="142" y="165" width="176" height="90" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5"/>
+<text x="162" y="199.0" font-size="21" fill="#252525" font-weight="700" text-anchor="start">Attention</text>
+<text x="162" y="230.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">output = 0</text>
+<rect x="516" y="165" width="176" height="90" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5"/>
+<text x="536" y="199.0" font-size="21" fill="#252525" font-weight="700" text-anchor="start">FFN</text>
+<text x="536" y="230.0" font-size="20" fill="#252525" font-weight="400" text-anchor="start">output = 0</text>
+<path d="M100 210L132 210" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<path d="M318 210L338 210" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<path d="M382 210L392 210" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<path d="M474 210L506 210" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<path d="M692 210L712 210" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<path d="M756 210L794 210" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<circle cx="360" cy="210" r="20" fill="white" stroke="#252525" stroke-width="1.7"/>
+<text x="360" y="218.0" font-size="29" fill="#252525" font-weight="400" text-anchor="middle">+</text>
+<circle cx="734" cy="210" r="20" fill="white" stroke="#252525" stroke-width="1.7"/>
+<text x="734" y="218.0" font-size="29" fill="#252525" font-weight="400" text-anchor="middle">+</text>
+<path d="M118 210 L118 128 L360 128 L360 188" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<path d="M490 210 L490 128 L734 128 L734 188" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="225" y="115.0" font-size="17" fill="#656565" font-weight="400" text-anchor="middle">residual path</text>
+<text x="610" y="115.0" font-size="17" fill="#656565" font-weight="400" text-anchor="middle">residual path</text>
+<text x="28" y="295.0" font-size="21" fill="#252525" font-weight="400" text-anchor="start">x + 0 + 0 = x. The active inner-model layers are retained.</text>
+<path d="M28 332L872 332" fill="none" stroke="#d7d7d7" stroke-width="1.7"/>
+<text x="28" y="378.0" font-size="23" fill="#252525" font-weight="700" text-anchor="start">B. Width: replicate coordinates; preserve logits</text>
+<text x="28" y="412.0" font-size="19" fill="#656565" font-weight="400" text-anchor="start">Two replicas with an untied decoder</text>
+<rect x="28" y="458" width="96" height="74" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="76" y="504.0" font-size="29" fill="#906000" font-weight="700" text-anchor="middle">h</text>
+<path d="M129 495L180 495" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="192" y="445" width="192" height="100" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<path d="M288 445L288 545" fill="none" stroke="#906000" stroke-width="1.7"/>
+<text x="240" y="504.0" font-size="29" fill="#906000" font-weight="700" text-anchor="middle">h</text>
+<text x="336" y="504.0" font-size="29" fill="#906000" font-weight="700" text-anchor="middle">h</text>
+<text x="288" y="575.0" font-size="21" fill="#656565" font-weight="400" text-anchor="middle">[h, h]</text>
+<path d="M390 495L440 495" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="452" y="445" width="230" height="100" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5"/>
+<text x="567" y="482.0" font-size="21" fill="#252525" font-weight="700" text-anchor="middle">Adjusted decoder</text>
+<text x="567" y="519.0" font-size="23" fill="#252525" font-weight="400" text-anchor="middle">D′ = [D/2, D/2]</text>
+<path d="M688 495L740 495" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="752" y="458" width="120" height="74" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="812" y="504.0" font-size="29" fill="#906000" font-weight="700" text-anchor="middle">Dh</text>
+<text x="812" y="575.0" font-size="20" fill="#656565" font-weight="400" text-anchor="middle">Same logits</text>
+<text x="28" y="621.0" font-size="19" fill="#656565" font-weight="400" text-anchor="start">Coordinated weights, normalization, and positional encoding are required.</text>
+</g></svg>

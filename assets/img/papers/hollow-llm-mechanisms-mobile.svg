@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450" height="1040" viewBox="0 0 450 1040" role="img" aria-labelledby="title desc">
+<title id="title">Hollow-LLM depth and width constructions</title><desc id="desc">Depth hollowing appends residual blocks whose attention and FFN outputs are zero, so x plus zero plus zero equals x. Width hollowing repeats compatible hidden states. With two copies and an untied decoder D prime equal to [D/2,D/2], the expanded state [h,h] produces the same logits Dh. Coordinated parameters and arithmetic are required.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#656565"/></marker></defs>
+<rect width="450" height="1040" fill="#fff"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="20" y="32.0" font-size="24" fill="#252525" font-weight="700" text-anchor="start">Depth and width hollowing</text>
+<text x="20" y="74.0" font-size="21" fill="#252525" font-weight="700" text-anchor="start">A. Added residual identity blocks</text>
+<rect x="180" y="92" width="90" height="44" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="225" y="123.0" font-size="27" fill="#906000" font-weight="700" text-anchor="middle">x</text>
+<path d="M225 136L225 158" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="105" y="170" width="240" height="70" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5"/>
+<text x="225" y="213.0" font-size="21" fill="#252525" font-weight="700" text-anchor="middle">Attention output = 0</text>
+<rect x="105" y="332" width="240" height="70" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5"/>
+<text x="225" y="375.0" font-size="21" fill="#252525" font-weight="700" text-anchor="middle">FFN output = 0</text>
+<path d="M225 240L225 254" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<circle cx="225" cy="276" r="20" fill="white" stroke="#252525" stroke-width="1.7"/>
+<text x="225" y="284.0" font-size="29" fill="#252525" font-weight="400" text-anchor="middle">+</text>
+<path d="M225 148 L54 148 L54 276 L203 276" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<path d="M225 298L225 320" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<path d="M225 402L225 421" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<circle cx="225" cy="443" r="20" fill="white" stroke="#252525" stroke-width="1.7"/>
+<text x="225" y="451.0" font-size="29" fill="#252525" font-weight="400" text-anchor="middle">+</text>
+<path d="M225 308 L54 308 L54 443 L203 443" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<path d="M225 465L225 483" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="180" y="495" width="90" height="50" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="225" y="529.0" font-size="27" fill="#906000" font-weight="700" text-anchor="middle">x</text>
+<text x="225" y="579.0" font-size="22" fill="#252525" font-weight="400" text-anchor="middle">x + 0 + 0 = x</text>
+<path d="M20 607L430 607" fill="none" stroke="#d7d7d7" stroke-width="1.7"/>
+<text x="20" y="649.0" font-size="22" fill="#252525" font-weight="700" text-anchor="start">B. Two replicas, same logits</text>
+<rect x="20" y="678" width="96" height="52" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<text x="68" y="713.0" font-size="27" fill="#906000" font-weight="700" text-anchor="middle">h</text>
+<path d="M122 704L160 704" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="172" y="668" width="258" height="72" rx="6" fill="#fcf6e8" stroke="#906000" stroke-width="1.5"/>
+<path d="M301 668L301 740" fill="none" stroke="#906000" stroke-width="1.7"/>
+<text x="236" y="713.0" font-size="27" fill="#906000" font-weight="700" text-anchor="middle">h</text>
+<text x="365" y="713.0" font-size="27" fill="#906000" font-weight="700" text-anchor="middle">h</text>
+<path d="M301 745L301 773" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="20" y="785" width="410" height="82" rx="6" fill="#f6f6f6" stroke="#656565" stroke-width="1.5"/>
+<text x="225" y="817.0" font-size="21" fill="#252525" font-weight="700" text-anchor="middle">Adjusted untied decoder</text>
+<text x="225" y="848.0" font-size="23" fill="#252525" font-weight="400" text-anchor="middle">D′ = [D/2, D/2]</text>
+<path d="M225 872L225 899" fill="none" stroke="#656565" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="225" y="935.0" font-size="27" fill="#906000" font-weight="700" text-anchor="middle">D′[h, h] = Dh</text>
+<text x="20" y="991" font-size="19" fill="#656565" font-weight="400" text-anchor="start">Coordinated weights, normalization,</text>
+<text x="20" y="1019" font-size="19" fill="#656565" font-weight="400" text-anchor="start">and positional encoding are required.</text>
+</g></svg>
