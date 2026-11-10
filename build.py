@@ -1589,7 +1589,7 @@ def link_label(url, default):
 
 
 def lab_names(ctx):
-    """Names of the PI, lab members, alumni and advisees, shown in bold in author lists."""
+    """Names of the PI, lab members, alumni and advisees for emphasis in author lists."""
     people = ctx["people"]
     names = {people["pi"]["name"]}
     names.update(m["name"] for g in people.get("groups", []) for m in g.get("members", []))
@@ -1598,13 +1598,15 @@ def lab_names(ctx):
     return names
 
 
-def authors_html(pub, lab):
-    """Authors with lab members in bold and an asterisk for equal contribution; no name breaks."""
+def authors_html(pub, lab, *, underlined=()):
+    """Authors with lab emphasis and an asterisk for equal contribution; no name breaks."""
     equal = set(pub.get("equal_contribution") or [])
     names = []
     for a in pub["authors"]:
         text = esc(a)
-        if a in lab:
+        if a in underlined:
+            text = f'<u class="me">{text}</u>'
+        elif a in lab:
             text = f'<strong class="me">{text}</strong>'
         if a in equal:
             text += ('<sup class="eq" aria-hidden="true">*</sup>'
@@ -1626,16 +1628,16 @@ def paper_link_items(pub):
     return items
 
 
-def pub_entry(ctx, pub, lab, level=3, full=False):
+def pub_entry(ctx, pub, lab, level=3, full=False, *, underlined=()):
     """One citation in the bibbase style of comsec's Publications page: the title in bold, the authors
-    (lab members in bold), the venue sentence and any award in cardinal italic, then a row of small
+    with lab emphasis, the venue sentence and any award in cardinal italic, then a row of small
     links. The title is a heading displayed inline, so screen-reader users can move between papers.
     full=True is the entry of the Publications page, with its anchor."""
     title = display_title(pub)
     end = "" if title.endswith((".", "?", "!")) else "."
     award = f' <em class="award">{esc(pub["award"])}</em>' if pub.get("award") else ""
     cite = (f'  <div class="pub__cite"><h{level} class="pub__title">{keep_ids(esc(title))}{end}</h{level}> '
-            f'<span class="pub__authors">{authors_html(pub, lab)}.</span> '
+            f'<span class="pub__authors">{authors_html(pub, lab, underlined=underlined)}.</span> '
             f'<span class="pub__venue">{citation_venue(pub)}</span>{award}</div>')
     # The hidden context keeps "Paper", "PDF" and "Code" apart in a screen reader's list of links.
     context = f'<span class="visually-hidden">: {esc(short_title(pub))}</span>'
@@ -1650,9 +1652,9 @@ def pub_entry(ctx, pub, lab, level=3, full=False):
     return f'<article class="pub" id="{esc(pub["id"])}">\n{body}\n</article>'
 
 
-def bold_note(pubs):
+def author_note(pubs, description="Lab members and advisees are shown in bold."):
     any_eq = any(p.get("equal_contribution") for p in pubs)
-    return "Lab members and advisees are shown in bold." + (" An asterisk (*) marks equal contribution." if any_eq else "")
+    return description + (" An asterisk (*) marks equal contribution." if any_eq else "")
 
 
 def project_anchor(project):
@@ -1891,6 +1893,7 @@ def page_research(ctx):
     themes = research.get("themes") or []
     projects = research.get("projects") or []
     lab = lab_names(ctx)
+    underlined = lab - {ctx["people"]["pi"]["name"]}
     sections = []
     for t in themes:
         tid = esc(t["id"])
@@ -1902,7 +1905,7 @@ def page_research(ctx):
             items = "".join(f"<li>{keep_ids(esc(x))}</li>" for x in t["open_problems"])
             parts.append(f'    <h3 class="area__h">Open problems</h3>\n    <ul class="area__problems">{items}</ul>')
         if rep:
-            rows = "\n".join(pub_entry(ctx, p, lab, level=4) for p in rep)
+            rows = "\n".join(pub_entry(ctx, p, lab, level=4, underlined=underlined) for p in rep)
             parts.append(f'    <h3 class="area__h">Representative papers</h3>\n    <div class="pubs pubs--area">\n{rows}\n    </div>')
         if n:
             # Every paper of the direction, newest first, folded under one line; each item links to
@@ -1957,7 +1960,10 @@ def page_research(ctx):
   </ul>
 </section>""")
     rep_all = [ctx["pubs_by_id"][r] for t in themes for r in t.get("papers") or []]
-    note = f'\n<p class="page-note">{bold_note(rep_all)}</p>' if rep_all else ""
+    note = ""
+    if rep_all:
+        legend = author_note(rep_all, "Lab students, alumni, and advisees are underlined.")
+        note = f'\n<p class="page-note">{legend}</p>'
     body = (f'{page_title("Research")}\n<div class="content content--research">\n'
             + "\n".join(sections) + f"{note}\n</div>")
     description = (f"Research directions of {site['name']} at {site['institution_short']}: "
@@ -2005,7 +2011,7 @@ def page_publications(ctx):
 </details>""")
     body = f"""{page_title("Publications")}
 <div class="content content--pubs">
-<p class="pub-intro">{scope} {bold_note(pubs)}{profile_sentence}</p>
+<p class="pub-intro">{scope} {author_note(pubs)}{profile_sentence}</p>
 <div class="pub-list">
 {chr(10).join(sections)}
 </div>
